@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--meta name="description" content=""-->
+    <!--meta name="author" content=""-->
+    <!--link rel="icon" href="../../favicon.ico"-->
+
+    <title>SPARQL Queries Front-End</title>
+
+  <script src="jquery-3.3.1.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!--link href='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.css' rel='stylesheet' type='text/css'/-->
+  <!--script src='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.js'></script-->
+</head>
+
+<body>
+  <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
+        <a class="navbar-brand">Interface for querying the Jena-Fuseki server over paramdataVL.ttl</a>
+      </nav>
+
+      <div class="container">
+
+        <div class="starter-template">
+          <div class="alert alert-info">
+            <strong>Info:</strong> Ensure the Jena-Fuseki server is running and the necessary .ttl files have been uploaded.
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-body">
+                <h3>Query 1</h3>
+                <h5>Selects all the <i>questions</i> for a single <i>property</i>.</h5>
+                <span>Select a property: </span>
+                <select id="property">
+                  <option value="FGP"> FGP </option>
+                  <option value="FGM"> FGM </option>
+                  <option value="FPC"> FPC </option>
+                  <option value="FGT"> FGT </option>
+                  <option value="FGN"> FGN </option>
+                  <option value="GCO"> GCO </option>
+                  <option value="PLS"> PLS </option>
+                  <option value="FND"> FND </option>
+                  <option value="FSN"> FSN </option>
+                  <option value="FNN"> FNN </option>
+                  <option value="SGE"> SGE </option>
+                  <option value="FGG"> FGG </option>
+                  <option value="CGB"> CGB </option>
+                  <option value="DGR"> DGR </option>
+                  <option value="DGP"> DGP </option>
+                  <option value="CGR"> CGR </option>
+                  <option value="NSD"> NSD </option>
+                  <option value="FVP"> FVP </option>
+                  <option value="DGD"> DGD </option>
+                  <option value="DPQ"> DPQ </option>
+                  <option value="DCN"> DCN </option>
+                  <option value="DNN"> DNN </option>
+                  <option value="DIN"> DIN </option>
+                  <option value="FGC"> FGC </option>
+                  <option value="DBC"> DBC </option>
+                  <option value="XCN"> XCN </option>
+                  <option value="GSC"> GSC </option>
+                  <option value="NOE"> NOE </option>
+                  <option value="HMP"> HMP </option>
+                  <option value="AST"> AST </option>
+                  <option value="FFS"> FFS </option>
+                  <option value="ADI"> ADI </option>
+                  <option value="DMP"> DMP </option>
+                  <option value="DMG"> DMG </option>
+                  <option value="GCN"> GCN </option>
+                  <option value="GFN"> GFN </option>
+                  <option value="GAL"> GAL </option>
+                  <option value="GUN"> GUN </option>
+                  <option value="EZ1"> EZ1 </option>
+                  <option value="EZ2"> EZ2 </option>
+                  <option value="EZ3"> EZ3 </option>
+                  <option value="GAD"> GAD </option>
+                  <option value="GFO"> GFO </option>
+                  <option value="PGO"> PGO </option>
+                  <option value="GFS"> GFS </option>
+                  <option value="GIT"> GIT </option>
+                  <option value="GSI"> GSI </option>
+                  <option value="ALP"> ALP </option>
+                  <option value="GST"> GST </option>
+                  <option value="GEI"> GEI </option>
+                  <option value="GNR"> GNR </option>
+                  <option value="STC"> STC </option>
+                  <option value="GPC"> GPC </option>
+                  <option value="PMN"> PMN </option>
+                  <option value="CQU"> CQU </option>
+                  <option value="PCA"> PCA </option>
+                  <option value="PSC"> PSC </option>
+                  <option value="RHM"> RHM </option>
+                  <option value="FRC"> FRC </option>
+                  <option value="NRC"> NRC </option>
+                  <option value="NOR"> NOR </option>
+                  <option value="AER"> AER </option>
+                  <option value="ARR"> ARR </option>
+                  <option value="DOR"> DOR </option>
+                  <option value="NOD"> NOD </option>
+                  <option value="NOP"> NOP </option>
+                  <option value="PNP"> PNP </option>
+                  <option value="NPP"> NPP </option>
+                  <option value="NGO"> NGO </option>
+                  <option value="NOA"> NOA </option>
+                  <option value="NM2"> NM2 </option>
+                  <option value="NM1"> NM1 </option>
+                  <option value="EAF"> EAF </option>
+                  <option value="NON"> NON </option>
+                  <option value="FPO"> FPO </option>
+                  <option value="ACM"> ACM </option>
+                  <option value="DOA"> DOA </option>
+                  <option value="NEX"> NEX </option>
+                  <option value="NCL"> NCL </option>
+                  <option value="PDC"> PDC </option>
+                  <option value="ACL"> ACL </option>
+                  <option value="APO"> APO </option>
+                  <option value="WAP"> WAP </option>
+                  <option value="AGE"> AGE </option>
+                  <option value="OPK"> OPK </option>
+                  <option value="TSP"> TSP </option>
+                  <option value="TSD"> TSD </option>
+                  <option value="TAD"> TAD </option>
+                  <option value="TDC"> TDC </option>
+                  <option value="TLC"> TLC </option>
+                  <option value="TNL"> TNL </option>
+                </select>
+                <br />
+                <br />
+                <button type="button" class="btn btn-primary btn-xs" onclick="submit_query()">Submit</button>
+                <button type="button" class="btn btn-xs" onclick="clear_fields()">Clear</button>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <h5><b>questions:</b></h5>
+                  <div id="outputbox">
+                  Output is displayed here
+                </div>
+                <p id="errorbox"></p>
+                <p id="successbox"></p>
+              </div>
+            </div>
+        </div>
+
+      </div><!-- /.container -->
+
+
+  <script type="text/javascript">
+    function display_response(response) {
+        data=response['results']['bindings'];
+        html_code="";
+        //html_code+=response['head']['vars']; //gives the parameters (data fields), requested by the query
+        for(i=0;i<data.length;i++) {
+          html_code+="<b>"+i.toString()+"</b><p>"+data[i]['question']['value']+"</p></br>"+'\n';
+        }
+        document.getElementById("outputbox").innerHTML=html_code;
+    }
+    function submit_query() {
+      server_url="http://localhost:3030/ds/query";
+      property=document.getElementById("property").value;
+      query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fquestion%0AWHERE+%7B%0A++%3A"+property+"+%3AparamQuestion+%3Fq_id+.%0A++%3Fq_id+rdfs%3Adescription+%3Fquestion+.%0A%7D%0ALIMIT+250+%23just+some+large+number%0A";
+      header="Accept: application/sparql-results+json"
+      TypeOfResponseData="JSON"
+      /*
+      var request= new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("outputbox").innerHTML = this.responseText;
+        }
+      };
+      request.open(POST,server_url,true);
+      request.setRequestHeader("Accept", "application/sparql-results+json");
+      request.send(query);
+      */
+
+      $.ajax({
+        type : "POST",
+        Accept : "application/sparql-results+"+TypeOfResponseData,
+        url : server_url,
+        data : query,
+        dataType : TypeOfResponseData,
+        success : function(response) {
+            console.log("SUCCESS: ", response);
+            display_response(response);
+        },
+        error : function(e) {
+            //console.log("ERROR: ", e);
+            document.getElementById("errorbox").innerHTML = e;
+        },
+        done : function(e) {
+            //console.log("DONE");
+            document.getElementById("successbox").innerHTML = "OK";
+        }
+        });
+
+    }
+
+    function clear_fields() {
+      init_str="Output is displayed here";
+      document.getElementById("outputbox").innerHTML = init_str;
+    }
+  </script>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
+<!--curl http://localhost:3030/ds/query -X POST --data 'query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fquestion%0AWHERE+%7B%0A++%3AFGP+%3AparamQuestion+%3Fq_id+.%0A++%3Fq_id+rdfs%3Adescription+%3Fquestion+.%0A%7D%0ALIMIT+250+%23just+some+large+number%0A' -H 'Accept: application/sparql-results+json' -->
