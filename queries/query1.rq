@@ -1,0 +1,11 @@
+#this query extracts all the questions for a single parameter
+prefix : <http://langelin.org/ns/v1#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?question
+WHERE {
+  :GCO :paramQuestion ?q_id .
+  ?q_id rdfs:description ?question
+}
+LIMIT 250 #just some large number
