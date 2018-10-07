@@ -1,0 +1,9 @@
+#this query returns the abbreviation of a language
+prefix : <http://langelin.org/ns/v1#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?lang_abbrev
+WHERE {
+  :l0014 :languageAbbrev ?lang_abbrev .
+}
