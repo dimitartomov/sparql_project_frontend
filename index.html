@@ -9,7 +9,7 @@
 
     <title>SPARQL Queries Front-End</title>
 
-  <script src="jquery-3.3.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <!--link href='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.css' rel='stylesheet' type='text/css'/-->
@@ -18,7 +18,7 @@
 
 <body>
   <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
-        <a class="navbar-brand">Interface for querying the Jena-Fuseki server over paramdataVL.ttl</a>
+        <a class="navbar-brand">Interface for queries</a>
       </nav>
 
       <div class="container">
@@ -27,12 +27,13 @@
           <div class="alert alert-info">
             <strong>Info:</strong> Ensure the Jena-Fuseki server is running and the necessary .ttl files have been uploaded.
           </div>
+          <!-- Query 1 -->
           <div class="panel panel-default">
             <div class="panel-body">
                 <h3>Query 1</h3>
-                <h5>Selects all the <i>questions</i> for a single <i>property</i>.</h5>
-                <span>Select a property: </span>
-                <select id="property">
+                <h5>Selects all the <i>questions</i> for a single <i>parameter</i>.</h5>
+                <span>Select a parameter: </span>
+                <select id="parameter">
                   <option value="FGP"> FGP </option>
                   <option value="FGM"> FGM </option>
                   <option value="FPC"> FPC </option>
@@ -127,41 +128,108 @@
                 </select>
                 <br />
                 <br />
-                <button type="button" class="btn btn-primary btn-xs" onclick="submit_query()">Submit</button>
-                <button type="button" class="btn btn-xs" onclick="clear_fields()">Clear</button>
+                <button type="button" class="btn btn-primary btn-xs" onclick="submit_query1()">Submit</button>
+                <button type="button" class="btn btn-xs" onclick="clear_fields_query1()">Clear</button>
               </div>
             </div>
             <div class="panel panel-default">
               <div class="panel-body">
                 <h5><b>questions:</b></h5>
-                  <div id="outputbox">
+                  <div id="outputbox_query1">
                   Output is displayed here
                 </div>
-                <p id="errorbox"></p>
-                <p id="successbox"></p>
+                <p id="errorbox_query1"></p>
+                <p id="successbox_query1"></p>
               </div>
             </div>
-        </div>
 
-      </div><!-- /.container -->
+            <!-- Query All Languages -->
+
+            <div class="panel panel-default">
+              <div class="panel-body">
+                  <h3>Query 2</h3>
+                  <h5>Returns all <i>languages</i>.</h5>
+                  <br />
+                  <button type="button" class="btn btn-primary btn-xs" onclick="query_all_languages()">Submit</button>
+                  <button type="button" class="btn btn-xs" onclick="clear_all_languages()">Clear</button>
+                </div>
+              </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <h5><b>languages:</b></h5>
+                  <div id="outputbox_all_languages">
+                  Output is displayed here
+                </div>
+              </div>
+            </div>
+
+            <!-- Query 3 - Table of parameter values-->
+
+            <div class="panel panel-default">
+              <div class="panel-body">
+                  <h3>Query 3</h3>
+                  <h5>Returns table of languages versus parameters. Each cell has the value of the <i>parameter</i> for that <i>language</i>.</h5>
+                  <br />
+                  <button type="button" class="btn btn-primary btn-xs" onclick="query_lang_param_values()">Retrieve</button>
+                  <button type="button" class="btn btn-primary btn-xs" onclick="show_lang_param_values()">Show</button>
+                  <button type="button" class="btn btn-xs" onclick="clear_lang_param_values()">Clear</button>
+                </div>
+              </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <h5><b>table:</b></h5>
+                  <div style="overflow-x: scroll; overflow-y: hidden; white-space: nowrap;" id="outputbox_lang_param_values">
+                  Output is displayed here
+                </div>
+              </div>
+            </div>
+
+            <!-- Query 4 - Table of parameter values-->
+
+            <div class="panel panel-default">
+              <div class="panel-body">
+                  <h3>Query 4</h3>
+                  <h5>Returns table of distances between languages Each cell is [(# of ++ pairs),(# of ++ or +- pairs)].</h5>
+                  <b>Note: You may have to click "Retrieve" twice. Scroll down for a greyscale version of the table. Each cell's colour in RGB is ((1-x)*255,(1-x)*255,(1-x)*255) where x=[avg(#(+-),#(++))]/#(+-) .</b>
+                  <br />
+                  <button type="button" class="btn btn-primary btn-xs" onclick="query_lang_dist_values()">Retrieve</button>
+                  <button type="button" class="btn btn-xs" onclick="clear_lang_dist_values()">Clear</button>
+                </div>
+              </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <h5><b>table:</b></h5>
+                  <div style="overflow-x: scroll; overflow-y: hidden; white-space: nowrap;" id="outputbox_lang_dist_values">
+                  Output is displayed here
+                </div>
+              </div>
+            </div>
+
+
+        </div>
+      </div>
 
 
   <script type="text/javascript">
-    function display_response(response) {
+    //clear function for all queries
+
+    //Query1
+
+    function display_response_query1(response) {
         data=response['results']['bindings'];
         html_code="";
         //html_code+=response['head']['vars']; //gives the parameters (data fields), requested by the query
         for(i=0;i<data.length;i++) {
           html_code+="<b>"+i.toString()+"</b><p>"+data[i]['question']['value']+"</p></br>"+'\n';
         }
-        document.getElementById("outputbox").innerHTML=html_code;
+        document.getElementById("outputbox_query1").innerHTML=html_code;
     }
-    function submit_query() {
+    function submit_query1() {
       server_url="http://localhost:3030/ds/query";
-      property=document.getElementById("property").value;
-      query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fquestion%0AWHERE+%7B%0A++%3A"+property+"+%3AparamQuestion+%3Fq_id+.%0A++%3Fq_id+rdfs%3Adescription+%3Fquestion+.%0A%7D%0ALIMIT+250+%23just+some+large+number%0A";
-      header="Accept: application/sparql-results+json"
-      TypeOfResponseData="JSON"
+      parameter=document.getElementById("parameter").value;
+      query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fquestion%0AWHERE+%7B%0A++%3A"+parameter+"+%3AparamQuestion+%3Fq_id+.%0A++%3Fq_id+rdfs%3Adescription+%3Fquestion+.%0A%7D%0ALIMIT+250+%23just+some+large+number%0A";
+      header="Accept: application/sparql-results+json";
+      TypeOfResponseData="JSON";
       /*
       var request= new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
@@ -181,24 +249,279 @@
         data : query,
         dataType : TypeOfResponseData,
         success : function(response) {
-            console.log("SUCCESS: ", response);
-            display_response(response);
+            //console.log("SUCCESS: ", response);
+            display_response_query1(response);
         },
         error : function(e) {
             //console.log("ERROR: ", e);
-            document.getElementById("errorbox").innerHTML = e;
+            document.getElementById("errorbox_query1").innerHTML = e;
         },
         done : function(e) {
             //console.log("DONE");
-            document.getElementById("successbox").innerHTML = "OK";
+            document.getElementById("successbox_query1").innerHTML = "OK";
         }
         });
 
     }
 
-    function clear_fields() {
+    function clear_fields_query1() {
       init_str="Output is displayed here";
-      document.getElementById("outputbox").innerHTML = init_str;
+      document.getElementById("outputbox_query1").innerHTML = init_str;
+    }
+
+    //Show all languages
+    function process_all_languages(response) {
+      data=response['results']['bindings'];
+      html_code = "";
+      html_code +=`<table class="table table-striped"><thead>`;
+      html_code +=`<tr>
+        <th scope="col">#</th>
+        <th scope="col">id</th>
+        <th scope="col">Name</th>
+      </tr></thead><tbody>`;
+      for(i=0;i<data.length;i++) {
+        lang_id=data[i]['lang']['value'];
+        lang_id=lang_id.substring(26,lang_id.length);
+        lang_name=data[i]['lang_name']['value'];
+        html_code +=`<tr>
+          <th scope="row">`+(i+1).toString()+`</th>
+          <td >`+lang_id+`</td>
+          <td >`+lang_name+`</td>
+        </tr>`;
+      }
+      html_code+=`</tbody></table>`;
+      document.getElementById("outputbox_all_languages").innerHTML = html_code;
+    }
+    function query_all_languages() {
+      server_url="http://localhost:3030/ds/query";
+      query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Flang+%3Flang_name%0AWHERE+%7B%0A++%3Flang+%3AlanguageAbbrev+%3Flang_abbrev+.%0A++%3Flang+rdfs%3Alabel+%3Flang_name+.%0A%7D%0A";
+      header="Accept: application/sparql-results+json";
+      TypeOfResponseData="JSON";
+      $.ajax({
+        type : "POST",
+        Accept : "application/sparql-results+"+TypeOfResponseData,
+        url : server_url,
+        data : query,
+        dataType : TypeOfResponseData,
+        success : function(response) {
+            //console.log("SUCCESS: ", response);
+            process_all_languages(response);
+        }
+        });
+    }
+    function clear_all_languages() {
+      init_str="Output is displayed here";
+      document.getElementById("outputbox_all_languages").innerHTML = init_str;
+    }
+
+    //Query 3 - Display table of languages and parameter values
+    var param_data=[];
+    var lang_data=[];
+    param_data.length=47;
+    for(i=0;i<param_data.length;i++){
+      param_data[i]={};
+    }
+    function check01(){
+      console.log(param_data);
+    }
+    function query_param_values(lang,index) {
+      server_url="http://localhost:3030/ds/query";
+      lang=lang.substring(26,lang.length);
+      query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fparam+%3Fvalue%0AWHERE+%7B%0A++%3A"+lang+"+%3AlanguageParameters+%3Fparam_node+.%0A++%3Fparam_node+%3Fparam+%3Fvalue+.%0A%7D";
+      header="Accept: application/sparql-results+json";
+      TypeOfResponseData="JSON";
+      $.ajax({
+        type : "POST",
+        Accept : "application/sparql-results+"+TypeOfResponseData,
+        url : server_url,
+        data : query,
+        dataType : TypeOfResponseData,
+        success : function(response) {
+          data=response['results']['bindings'];
+          param_data[index]=data;
+          //console.log(data);
+          //console.log(param_data[index]);
+        }
+        });
+    }
+    function process_lang_param_values(languages,parameters,table) {
+      html_code="";
+      html_code+=`<table class="table table-striped" style="display: inline-block;"><thead>`;
+      html_code +=`<tr>
+        <th scope="col">#</th>`;
+      for(i=0;i<(table[0]).length;i++) {
+        html_code+=`<th scope="col">`+parameters[i]+`</th>`;
+      }
+      html_code+=`</tr></thead><tbody>`;
+      for(i=0;i<table.length;i++) {
+        html_code+=`<tr><th scope="row">`+languages[i]+`</th>`;
+        for(j=0;j<table[i].length;j++){
+          html_code+=`<td>`+table[i][j]+`</td>`;
+        }
+        html_code+=`</tr>`;
+      }
+      html_code+=`</tbody></table>`;
+      document.getElementById("outputbox_lang_param_values").innerHTML=html_code;
+    }
+    function query_lang_param_values() {
+      server_url="http://localhost:3030/ds/query";
+      query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Flang+%3Flang_name%0AWHERE+%7B%0A++%3Flang+%3AlanguageAbbrev+%3Flang_abbrev+.%0A++%3Flang+rdfs%3Alabel+%3Flang_name+.%0A%7D%0A";
+      // query above returns all languages
+      header="Accept: application/sparql-results+json";
+      TypeOfResponseData="JSON";
+      $.ajax({
+        type : "POST",
+        Accept : "application/sparql-results+"+TypeOfResponseData,
+        url : server_url,
+        data : query,
+        dataType : TypeOfResponseData,
+        success : function(response) {
+            //console.log("SUCCESS: ", response);
+            data=response['results']['bindings'];
+            languages=[]; //contains language names for corresponding row indeces in table[]
+            for(i=0;i<data.length;i++) {
+              lang=data[i]['lang']['value']; //this is the id of the language
+              languages[i]=data[i]['lang_name']['value']; //full name of the language
+              query_param_values(lang,i);
+            }
+            //console.log("response: ", response);
+            //console.log("languages: ", languages);
+            //console.log("parameters: ", parameters);
+            //console.log("table: ", table);
+            //check01();
+            lang_data=languages;
+        }
+        });
+    }
+    function show_lang_param_values() {
+      table=[]; // 2D array for later to be filled with $(data.length) rows for the languages and 91 columns for the parameters
+      parameters=[]; //contains parameter names for corresponding column indeces in table[]
+      table.length=lang_data.length;
+      for(i=0;i<table.length;i++){
+        table[i]=[]; //make a row for the parameters of the i-th language
+        for(j=0;j<param_data[i].length;j++) {
+          param_name=param_data[i][j]['param']['value'];
+          param_name=param_name.substring(26,param_name.length);
+          index=-1;
+          if(i===0){parameters[j]=param_name;index=j}
+          else {
+            for(k=0;k<parameters.length;k++)if(parameters[k]===param_name){index=k;break;}
+          }
+          table[i][index]=param_data[i][j]['value']['value'];
+        }
+      }
+      //console.log(table);
+      //console.log(parameters);
+      process_lang_param_values(lang_data,parameters,table);
+    }
+    function clear_lang_param_values() {
+      init_str="Output is displayed here";
+      document.getElementById("outputbox_lang_param_values").innerHTML=init_str;
+    }
+
+    //Query 4 - Display table of distances between languages
+    //using the same data fron query 3 - the only difference is the show_data() function and the table_dist[][][] creation inside query_lang_dist_values()
+    show_lang_dist_values();
+    function query_lang_dist_values() {
+      query_lang_param_values();
+      table=[]; // 2D array for later to be filled with $(data.length) rows for the languages and 91 columns for the parameters
+      parameters=[]; //contains parameter names for corresponding column indeces in table[]
+      table.length=lang_data.length;
+      for(i=0;i<table.length;i++){
+        table[i]=[]; //make a row for the parameters of the i-th language
+        for(j=0;j<param_data[i].length;j++) {
+          param_name=param_data[i][j]['param']['value'];
+          param_name=param_name.substring(26,param_name.length);
+          index=-1;
+          if(i===0){parameters[j]=param_name;index=j}
+          else {
+            for(k=0;k<parameters.length;k++)if(parameters[k]===param_name){index=k;break;}
+          }
+          table[i][index]=param_data[i][j]['value']['value'];
+        }
+      }
+
+      table_dist=[];
+      l=lang_data.length;
+      for(i=0;i<l;i++){
+        table_dist[i]=[];
+        for(j=0;j<l;j++){
+          num_plusplus=0;
+          num_plusplus_or_plusminus=0;
+          table_dist[i][j]=[];
+          if(i===j){
+            table_dist[i][j][0]=-1;
+            table_dist[i][j][1]=-1;
+          }
+          for(k=0;k<l;k++){
+            if(table[i][k]==="+"){
+              if(table[j][k]==="+"){
+                num_plusplus++; num_plusplus_or_plusminus++;
+              }
+              else if(table[j][k]==="-")num_plusplus_or_plusminus++;
+            }
+            else if(table[i][k]==="-"){
+              if(table[j][k]==="+")num_plusplus_or_plusminus++;
+            }
+          }
+          table_dist[i][j].push(num_plusplus);
+          table_dist[i][j].push(num_plusplus_or_plusminus);
+        }
+      }
+      show_lang_dist_values(table_dist);
+    }
+    function show_lang_dist_values(table_dist) {
+      html_code="";
+      html_code+=`<table class="table table-striped table-sm table-responsive" style="display: inline-block;"><thead>`;
+      html_code +=`<tr>
+        <th scope="col">#</th>`;
+      l=lang_data.length;
+      for(i=0;i<l;i++) {
+        html_code+=`<th scope="col">`+lang_data[i]+`</th>`;
+      }
+      html_code+=`</tr></thead><tbody>`;
+      for(i=0;i<l;i++) {
+        html_code+=`<tr><th scope="row">`+lang_data[i]+`</th>`;
+        for(j=0;j<l;j++){
+          if(table_dist[i][j][0]===-1){
+            html_code+=`<td>(X,X)</td>`;
+          }
+          else  html_code+=`<td>(`+table_dist[i][j][0]+`,`+table_dist[i][j][1]+`)</td>`;
+        }
+        html_code+=`</tr>`;
+      }
+      html_code+=`</tbody></table>`;
+
+      html_code+=`<br />`;
+      html_code2=""
+      html_code2+=`<table class="table table-striped table-sm table-responsive" style="display: inline-block;"><thead>`;
+      html_code2 +=`<tr>
+        <th scope="col">#</th>`;
+      l=lang_data.length;
+      for(i=0;i<l;i++) {
+        html_code2+=`<th scope="col">`+lang_data[i]+`</th>`;
+      }
+      html_code2+=`</tr></thead><tbody>`;
+      for(i=0;i<l;i++) {
+        html_code2+=`<tr><th scope="row">`+lang_data[i]+`</th>`;
+        for(j=0;j<l;j++){
+          if(table_dist[i][j][0]===-1){
+            html_code2+=`<td bgcolor="wheat"></td>`;
+          }
+          else {
+            x=((table_dist[i][j][1]-table_dist[i][j][0])/2)/(table_dist[i][j][1]);
+            colour=(1-x)*255;
+            html_code2+=`<td style="background-color:rgb(`+Math.floor(colour)+`,`+Math.floor(colour)+`,`+Math.floor(colour)+`);"></td>`;
+          }
+        }
+        html_code2+=`</tr>`;
+      }
+      html_code2+=`</tbody></table>`;
+      document.getElementById("outputbox_lang_dist_values").innerHTML=html_code+html_code2;
+    }
+    function clear_lang_dist_values() {
+      init_str="Output is displayed here";
+      document.getElementById("outputbox_lang_dist_values").innerHTML=init_str;
     }
   </script>
   <!-- Latest compiled JavaScript -->
