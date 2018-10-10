@@ -173,8 +173,13 @@
                   <button type="button" class="btn btn-primary btn-xs" onclick="query_lang_param_values()">Retrieve</button>
                   <button type="button" class="btn btn-primary btn-xs" onclick="show_lang_param_values()">Show</button>
                   <button type="button" class="btn btn-xs" onclick="clear_lang_param_values()">Clear</button>
+                  <br />
+                  download table in TXT or CSV:
                   <button type="button" class="btn btn-xs btn-link"><a id="query3_table_txt_download_link">tableLangParams.txt</a></button>
                   <button type="button" class="btn btn-xs btn-link"><a id="query3_table_csv_download_link">tableLangParams.csv</a></button>
+                  <br />table with 3 additional columns (number of pluses, minuses, and zeroes) for each lang:
+                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table1_txt_download_link">tableLangParams_with_sum_columns.txt</a></button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table1_csv_download_link">tableLangParams_with_sum_columns.csv</a></button>
                 </div>
               </div>
             <div class="panel panel-default">
@@ -330,6 +335,46 @@
       a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
     }
 
+    //stringify table to TXT or CSV
+    function makeCSVfromTable(table,rowNames,colNames){
+      table_csv="";
+      table_csv+=" ";
+      for(i=0;i<colNames.length;i++){
+        table_csv+=','+colNames[i];
+      }
+      table_csv+='\n';
+      for(i=0;i<table.length;i++){
+          table_csv+=rowNames[i];
+        for(j=0;j<table[i].length;j++){
+          table_csv+=','+table[i][j];
+        }
+        table_csv+='\n';
+      }
+      return table_csv;
+    }
+    function makeTXTfromTable(table,rowNames,colNames){
+      table_txt="";
+      max_row_name_length=0;
+      for(i=0;i<rowNames.length;i++){
+        if(rowNames[i].length>max_row_name_length)max_row_name_length=rowNames[i].length;
+      }
+      for(i=0;i<max_row_name_length;i++){table_txt+=' ';}
+      for(i=0;i<colNames.length;i++){
+        table_txt+='\t|\t';
+        table_txt+=colNames[i];
+      }
+      table_txt+='\t|\n';
+      for(i=0;i<table.length;i++){
+        for(k=0;k<max_row_name_length-rowNames[i].length;k++){table_txt+=' ';}
+          table_txt+=rowNames[i];
+        for(j=0;j<table[i].length;j++){
+          table_txt+='\t|\t';
+          table_txt+=' '+table[i][j]+' ';
+        }
+        table_txt+='\t|\n';
+      }
+      return table_txt;
+    }
 
     //Query 3 - Display table of languages and parameter values
     var param_data=[];
@@ -429,39 +474,40 @@
       }
       //console.log(table);
       //console.log(parameters);
-      table_txt="";
-      table_csv="";
-      //stringify the table to both TXT and CSV
-      max_lang_name_length=0;
-      for(i=0;i<lang_data.length;i++){
-        if(lang_data[i].length>max_lang_name_length)max_lang_name_length=lang_data[i].length;
-      }
-      for(i=0;i<max_lang_name_length;i++){table_txt+=' ';}
-      table_csv+=" ";
-      for(i=0;i<table[0].length;i++){
-        table_txt+='\t|\t';
-        table_txt+=parameters[i];
-        table_csv+=','+parameters[i];
-      }
-      table_txt+='\t|\n';
-      table_csv+='\n';
+      rowNames=lang_data;
+      colNames=parameters;
+      table_txt=makeTXTfromTable(table,rowNames,colNames);
+      table_csv=makeCSVfromTable(table,rowNames,colNames);
+      //add summation columns at the end of the table - 3 columns for the # of +,-,0 for each lang
+      table1=[];
       for(i=0;i<table.length;i++){
-        for(k=0;k<max_lang_name_length-lang_data[i].length;k++){table_txt+=' ';}
-          table_txt+=lang_data[i];
-          table_csv+=lang_data[i];
+        table1[i]=[];
+        var j=0;
+        var sum_plus=0;
+        var sum_minus=0;
+        var sum_zero=0;
         for(j=0;j<table[i].length;j++){
-          table_txt+='\t|\t';
-          table_txt+=' '+table[i][j]+' ';
-          table_csv+=','+table[i][j];
+          table1[i][j]=table[i][j];
+          if(table[i][j]==="+")sum_plus++;
+          if(table[i][j]==="-")sum_minus++;
+          if(table[i][j]==="0")sum_zero++;
         }
-        table_txt+='\t|\n';
-        table_csv+='\n';
+        table1[i][j++]=sum_plus;
+        table1[i][j++]=sum_minus;
+        table1[i][j++]=sum_zero;
       }
-
+      colNames.push("N_+");
+      colNames.push("N_-");
+      colNames.push("N_0");
+      table1_txt=makeTXTfromTable(table1,rowNames,colNames);
+      table1_csv=makeCSVfromTable(table1,rowNames,colNames);
       //create download links
       const MIME_TYPE = 'text/plain';
       create_download_button_link(MIME_TYPE,"tableLangParams.txt",table_txt,"query3_table_txt_download_link");
       create_download_button_link(MIME_TYPE,"tableLangParams.csv",table_csv,"query3_table_csv_download_link");
+      create_download_button_link(MIME_TYPE,"tableLangParams_with_sum_columns.txt",table1_txt,"query3_table1_txt_download_link");
+      create_download_button_link(MIME_TYPE,"tableLangParams_with_sum_columns.csv",table1_csv,"query3_table1_csv_download_link");
+
       //display the data
       process_lang_param_values(lang_data,parameters,table);
     }
