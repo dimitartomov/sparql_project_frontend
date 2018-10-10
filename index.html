@@ -173,6 +173,8 @@
                   <button type="button" class="btn btn-primary btn-xs" onclick="query_lang_param_values()">Retrieve</button>
                   <button type="button" class="btn btn-primary btn-xs" onclick="show_lang_param_values()">Show</button>
                   <button type="button" class="btn btn-xs" onclick="clear_lang_param_values()">Clear</button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table_txt_download_link">tableLangParams.txt</a></button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table_csv_download_link">tableLangParams.csv</a></button>
                 </div>
               </div>
             <div class="panel panel-default">
@@ -190,10 +192,12 @@
               <div class="panel-body">
                   <h3>Query 4</h3>
                   <h5>Returns table of distances between languages Each cell is [(# of ++ pairs),(# of ++ or +- pairs)].</h5>
-                  <b>Note: You may have to click "Retrieve" twice. Scroll down for a greyscale version of the table. Each cell's colour in RGB is ((1-x)*255,(1-x)*255,(1-x)*255) where x=[avg(#(+-),#(++))]/#(+-) .</b>
+                  <b>Note: You may have to click "Retrieve" twice. Scroll down for a greyscale version of the table. Each cell's colour in RGB is ((1-x)*255,(1-x)*255,(1-x)*255) where x=[#(++)/#(+-)] .</b>
                   <br />
                   <button type="button" class="btn btn-primary btn-xs" onclick="query_lang_dist_values()">Retrieve</button>
                   <button type="button" class="btn btn-xs" onclick="clear_lang_dist_values()">Clear</button>
+                  <button type="button" class="btn btn-link btn-xs" id="download_table_btn">Download table</button>
+
                 </div>
               </div>
             <div class="panel panel-default">
@@ -314,6 +318,19 @@
       document.getElementById("outputbox_all_languages").innerHTML = init_str;
     }
 
+
+
+    //create download link
+    function create_download_button_link(MIME_TYPE,fileName,fileContent,button_link_id){
+      // code adapted from [view-source:http://html5-demos.appspot.com/static/a.download.html]
+      var bb = new Blob([fileContent], {type: MIME_TYPE});
+      var a = document.getElementById(button_link_id);//the button link
+      a.download = fileName;//filename of the downloaded file
+      a.href = window.URL.createObjectURL(bb);
+      a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
+    }
+
+
     //Query 3 - Display table of languages and parameter values
     var param_data=[];
     var lang_data=[];
@@ -412,6 +429,40 @@
       }
       //console.log(table);
       //console.log(parameters);
+      table_txt="";
+      table_csv="";
+      //stringify the table to both TXT and CSV
+      max_lang_name_length=0;
+      for(i=0;i<lang_data.length;i++){
+        if(lang_data[i].length>max_lang_name_length)max_lang_name_length=lang_data[i].length;
+      }
+      for(i=0;i<max_lang_name_length;i++){table_txt+=' ';}
+      table_csv+=" ";
+      for(i=0;i<table.length;i++){
+        table_txt+='\t|\t';
+        table_txt+=parameters[i];
+        table_csv+=','+parameters[i];
+      }
+      table_txt+='\t|\n';
+      table_csv+='\n';
+      for(i=0;i<table.length;i++){
+        for(k=0;k<max_lang_name_length-lang_data[i].length;k++){table_txt+=' ';}
+          table_txt+=lang_data[i];
+          table_csv+=lang_data[i];
+        for(j=0;j<table[i].length;j++){
+          table_txt+='\t|\t';
+          table_txt+=' '+table[i][j]+' ';
+          table_csv+=','+table[i][j];
+        }
+        table_txt+='\t|\n';
+        table_csv+='\n';
+      }
+
+      //create download links
+      const MIME_TYPE = 'text/plain';
+      create_download_button_link(MIME_TYPE,"tableLangParams.txt",table_txt,"query3_table_txt_download_link");
+      create_download_button_link(MIME_TYPE,"tableLangParams.csv",table_csv,"query3_table_csv_download_link");
+      //display the data
       process_lang_param_values(lang_data,parameters,table);
     }
     function clear_lang_param_values() {
@@ -509,8 +560,8 @@
             html_code2+=`<td bgcolor="wheat"></td>`;
           }
           else {
-            x=((table_dist[i][j][1]-table_dist[i][j][0])/2)/(table_dist[i][j][1]);
-            colour=(1-x)*255;
+            x=(table_dist[i][j][0])/(table_dist[i][j][1]);
+            colour=x*255;
             html_code2+=`<td style="background-color:rgb(`+Math.floor(colour)+`,`+Math.floor(colour)+`,`+Math.floor(colour)+`);"></td>`;
           }
         }
@@ -523,6 +574,46 @@
       init_str="Output is displayed here";
       document.getElementById("outputbox_lang_dist_values").innerHTML=init_str;
     }
+    //Export table button code -- TODO: to be adapted - NOT WORKING
+    /*$(document).ready(function(){
+        $("#download_table_btn").click(function(e) {
+          const items = json3.items
+          const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+          const header = Object.keys(items[0])
+          let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+          csv.unshift(header.join(','))
+          csv = csv.join('\r\n')
+
+          console.log(csv)
+            var msg = GetMimeTypes();
+            console.log(msg);
+            //OpenOffice
+            window.open('data:application/vnd.oasis.opendocument.spreadsheet,' + $('#outputbox_lang_dist_values').html());
+            //MS-Excel
+            window.open('data:application/vnd.ms-excel,' + $('#outputbox_lang_dist_values').html());
+            //CSV
+            window.open('data:application/csv,charset=utf-8,' + $('#outputbox_lang_dist_values').html());
+            e.preventDefault();
+        });
+    });
+
+    function GetMimeTypes () {
+        var message = "";
+            // Internet Explorer supports the mimeTypes collection, but it is always empty
+        if (navigator.mimeTypes && navigator.mimeTypes.length > 0) {
+            var mimes = navigator.mimeTypes;
+            for (var i=0; i < mimes.length; i++) {
+                message += "<b>" + mimes[i].type + "</b> : " + mimes[i].description + "<br />";
+            }
+        }
+        else {
+            message = "Your browser does not support this ";
+           //sorry!
+        }
+
+        return ( message);
+    }
+    */
   </script>
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
