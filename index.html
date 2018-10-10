@@ -438,7 +438,7 @@
       }
       for(i=0;i<max_lang_name_length;i++){table_txt+=' ';}
       table_csv+=" ";
-      for(i=0;i<table.length;i++){
+      for(i=0;i<table[0].length;i++){
         table_txt+='\t|\t';
         table_txt+=parameters[i];
         table_csv+=','+parameters[i];
@@ -574,46 +574,7 @@
       init_str="Output is displayed here";
       document.getElementById("outputbox_lang_dist_values").innerHTML=init_str;
     }
-    //Export table button code -- TODO: to be adapted - NOT WORKING
-    /*$(document).ready(function(){
-        $("#download_table_btn").click(function(e) {
-          const items = json3.items
-          const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-          const header = Object.keys(items[0])
-          let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-          csv.unshift(header.join(','))
-          csv = csv.join('\r\n')
 
-          console.log(csv)
-            var msg = GetMimeTypes();
-            console.log(msg);
-            //OpenOffice
-            window.open('data:application/vnd.oasis.opendocument.spreadsheet,' + $('#outputbox_lang_dist_values').html());
-            //MS-Excel
-            window.open('data:application/vnd.ms-excel,' + $('#outputbox_lang_dist_values').html());
-            //CSV
-            window.open('data:application/csv,charset=utf-8,' + $('#outputbox_lang_dist_values').html());
-            e.preventDefault();
-        });
-    });
-
-    function GetMimeTypes () {
-        var message = "";
-            // Internet Explorer supports the mimeTypes collection, but it is always empty
-        if (navigator.mimeTypes && navigator.mimeTypes.length > 0) {
-            var mimes = navigator.mimeTypes;
-            for (var i=0; i < mimes.length; i++) {
-                message += "<b>" + mimes[i].type + "</b> : " + mimes[i].description + "<br />";
-            }
-        }
-        else {
-            message = "Your browser does not support this ";
-           //sorry!
-        }
-
-        return ( message);
-    }
-    */
   </script>
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
