@@ -201,7 +201,8 @@
                   <br />
                   <button type="button" class="btn btn-primary btn-xs" onclick="query_lang_dist_values()">Retrieve</button>
                   <button type="button" class="btn btn-xs" onclick="clear_lang_dist_values()">Clear</button>
-                  <button type="button" class="btn btn-link btn-xs" id="download_table_btn">Download table</button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query4_table1_txt_download_link">tableLangLang_plusplus.csv</a></button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query4_table2_txt_download_link">tableLangLang_plusminus.csv</a></button>
 
                 </div>
               </div>
@@ -510,6 +511,7 @@
 
       //display the data
       process_lang_param_values(lang_data,parameters,table);
+      //TODO: generalize the table display function as a function(table)->[html rendered code]
     }
     function clear_lang_param_values() {
       init_str="Output is displayed here";
@@ -563,8 +565,32 @@
           }
           table_dist[i][j].push(num_plusplus);
           table_dist[i][j].push(num_plusplus_or_plusminus);
+
         }
       }
+            table_pp=[];
+            table_pm=[];
+
+            for(i=0;i<table_dist.length;i++){
+                  table_pp[i]=[];
+                  table_pm[i]=[];
+
+              for(j=0;j<table_dist.length;j++){
+                table_pp[i][j]=table_dist[i][j][0];
+                table_pm[i][j]=table_dist[i][j][1];
+
+              }
+            }
+            rowNames=lang_data;
+            colNames=lang_data;
+            table_plusplus=makeCSVfromTable(table_pp,rowNames,colNames);
+            table_plusminus=makeCSVfromTable(table_pm,rowNames,colNames);
+
+            //create download links
+            const MIME_TYPE = 'text/plain';
+            create_download_button_link(MIME_TYPE,"tableLangLang_plusminus.csv",table_plusplus,"query4_table2_txt_download_link");
+            create_download_button_link(MIME_TYPE,"tableLangLang_plusplus.csv",table_plusminus,"query4_table1_txt_download_link");
+
       show_lang_dist_values(table_dist);
     }
     function show_lang_dist_values(table_dist) {
