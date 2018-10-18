@@ -14,6 +14,18 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <!--link href='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.css' rel='stylesheet' type='text/css'/-->
   <!--script src='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.js'></script-->
+
+  <script type="text/javascript">
+        function prepare_queries_html_forms() {
+
+            //query5
+            document.getElementById("q5_param1").innerHTML=document.getElementById("parameter").innerHTML;
+            document.getElementById("q5_param2").innerHTML=document.getElementById("parameter").innerHTML;
+            document.getElementById("q5_param3").innerHTML=document.getElementById("parameter").innerHTML;
+
+        }
+        window.onload = prepare_queries_html_forms;
+  </script>
 </head>
 
 <body>
@@ -27,6 +39,50 @@
           <div class="alert alert-info">
             <strong>Info:</strong> Ensure the Jena-Fuseki server is running and the necessary .ttl files have been uploaded.
           </div>
+
+          <!-- Query 5 -->
+          <div class="panel panel-default">
+            <div class="panel-body">
+                <h3>Query 5</h3>
+                <h5>This query takes the values of two parameters and returns all languages that have these exact parameters with these exact values. In addition there could be selected a third parameter for its values of the forementioned languages to be queried.</h5>
+
+                parameter 1: <select id="q5_param1"></select>
+                value:
+                <select id="q5_param1_value">
+                  <option value="-1">  </option>
+                  <option value="%2B"> + </option>
+                  <option value="-"> - </option>
+                  <option value="0"> 0 </option>
+                </select>
+                <br />
+                parameter 2: <select id="q5_param2"></select>
+                value:
+                <select id="q5_param2_value">
+                  <option value="-1">  </option>
+                  <option value="%2B"> + </option>
+                  <option value="-"> - </option>
+                  <option value="0"> 0 </option>
+                </select>
+                <br />
+                ([optional:] parameter 3: <select id="q5_param3"></select>)<br />
+                <br />
+                <br />
+                <button type="button" class="btn btn-primary btn-xs" onclick="submit_query5()">Submit</button>
+                <button type="button" class="btn btn-xs" onclick="clear_fields_query5()">Clear</button>
+                <button type="button" class="btn btn-xs btn-link"><a id="query5_table_csv_download_link">tableLang_with_two_specified_parameters.CSV</a></button>
+                <button type="button" class="btn btn-xs btn-link"><a id="query5_table_txt_download_link">tableLang_with_two_specified_parameters.TXT</a></button>
+
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <h5><b>languages:</b></h5>
+                <div id="outputbox_query5">
+                  Output is displayed here
+                </div>
+              </div>
+            </div>
+
           <!-- Query 1 -->
           <div class="panel panel-default">
             <div class="panel-body">
@@ -34,6 +90,8 @@
                 <h5>Selects all the <i>questions</i> for a single <i>parameter</i>.</h5>
                 <span>Select a parameter: </span>
                 <select id="parameter">
+                  <!--TODO make this list authomated with a query (number of parameters may vary, although very unlikely to do so)-->
+                  <option value="0"> - </option>
                   <option value="FGP"> FGP </option>
                   <option value="FGM"> FGM </option>
                   <option value="FPC"> FPC </option>
@@ -175,11 +233,11 @@
                   <button type="button" class="btn btn-xs" onclick="clear_lang_param_values()">Clear</button>
                   <br />
                   download table in TXT or CSV:
-                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table_txt_download_link">tableLangParams.txt</a></button>
-                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table_csv_download_link">tableLangParams.csv</a></button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table_txt_download_link">tableLangParams.TXT</a></button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table_csv_download_link">tableLangParams.CSV</a></button>
                   <br />table with 3 additional columns (number of pluses, minuses, and zeroes) for each lang:
-                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table1_txt_download_link">tableLangParams_with_sum_columns.txt</a></button>
-                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table1_csv_download_link">tableLangParams_with_sum_columns.csv</a></button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table1_txt_download_link">tableLangParams_with_sum_columns.TXT</a></button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query3_table1_csv_download_link">tableLangParams_with_sum_columns.CSV</a></button>
                 </div>
               </div>
             <div class="panel panel-default">
@@ -201,8 +259,8 @@
                   <br />
                   <button type="button" class="btn btn-primary btn-xs" onclick="query_lang_dist_values()">Retrieve</button>
                   <button type="button" class="btn btn-xs" onclick="clear_lang_dist_values()">Clear</button>
-                  <button type="button" class="btn btn-xs btn-link"><a id="query4_table1_txt_download_link">tableLangLang_plusplus.csv</a></button>
-                  <button type="button" class="btn btn-xs btn-link"><a id="query4_table2_txt_download_link">tableLangLang_plusminus.csv</a></button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query4_table1_csv_download_link">tableLangLang_plusplus.CSV</a></button>
+                  <button type="button" class="btn btn-xs btn-link"><a id="query4_table2_csv_download_link">tableLangLang_plusminus.CSV</a></button>
 
                 </div>
               </div>
@@ -221,7 +279,85 @@
 
 
   <script type="text/javascript">
-    //clear function for all queries
+
+    //render table data into html code inside table element with id 'table_id'
+    function renderTable(outputbox_id,rowNames,colNames,table_data){//TODO: apply this function to all the tables throughout queries to simplify their code
+      tablebox=document.getElementById(outputbox_id);
+      html_code="";
+      html_code+=`<table class="table table-striped table-sm table-responsive" style="display: inline-block;"><thead>`;
+      html_code +=`<tr>
+        <th scope="col">#</th>`;
+      for(i=0;i<colNames.length;i++) {
+        html_code+=`<th scope="col">`+colNames[i]+`</th>`;
+      }
+      html_code+=`</tr></thead><tbody>`;
+      for(i=0;i<table_data.length;i++) {
+        html_code+=`<tr><th scope="row">`+rowNames[i]+`</th>`;
+        for(j=0;j<table_data[i].length;j++){
+          html_code+=`<td>`+table_data[i][j]+`</td>`;
+        }
+        html_code+=`</tr>`;
+      }
+      html_code+=`</tbody></table>`;
+      html_code+=`<br />`;
+      tablebox.innerHTML=html_code;
+    }
+
+    //create download link
+    function create_download_button_link(MIME_TYPE,fileName,fileContent,button_link_id){
+      // code adapted from [view-source:http://html5-demos.appspot.com/static/a.download.html]
+      var bb = new Blob([fileContent], {type: MIME_TYPE});
+      var a = document.getElementById(button_link_id);//the button link
+      a.download = fileName;//filename of the downloaded file
+      a.href = window.URL.createObjectURL(bb);
+      a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
+    }
+
+    //stringify table to TXT or CSV
+    function makeCSVfromTable(table,rowNames,colNames){
+      table_csv="";
+      table_csv+=" ";
+      for(i=0;i<colNames.length;i++){
+        table_csv+=','+colNames[i];
+      }
+      table_csv+='\n';
+      for(i=0;i<table.length;i++){
+          table_csv+=rowNames[i];
+        for(j=0;j<table[i].length;j++){
+          table_csv+=','+table[i][j];
+        }
+        table_csv+='\n';
+      }
+      return table_csv;
+    }
+    function makeTXTfromTable(table,rowNames,colNames){//WARNING: makeTXTfromTable() has problems with column width
+      table_txt="";
+      max_row_name_length=0;
+      for(i=0;i<rowNames.length;i++){
+        if(rowNames[i].length>max_row_name_length)max_row_name_length=rowNames[i].length;
+      }
+      for(i=0;i<max_row_name_length;i++){table_txt+=' ';}
+      for(i=0;i<colNames.length;i++){
+        table_txt+='\t|\t';
+        table_txt+=colNames[i];
+      }
+      table_txt+='\t|\n';
+      for(i=0;i<table.length;i++){
+        for(k=0;k<max_row_name_length-rowNames[i].length;k++){table_txt+=' ';}
+          table_txt+=rowNames[i];
+        for(j=0;j<table[i].length;j++){
+          table_txt+='\t|\t';
+          table_txt+=' '+table[i][j]+' ';
+        }
+        table_txt+='\t|\n';
+      }
+      return table_txt;
+    }
+
+
+    //
+    //QUERIES FOLLOW
+    //
 
     //Query1
 
@@ -237,20 +373,13 @@
     function submit_query1() {
       server_url="http://localhost:3030/ds/query";
       parameter=document.getElementById("parameter").value;
+      if(parameter==="0"){
+        document.getElementById("outputbox_query1").innerHTML="<b>Please select a parameter!</b>";
+      }
+      else {
       query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fquestion%0AWHERE+%7B%0A++%3A"+parameter+"+%3AparamQuestion+%3Fq_id+.%0A++%3Fq_id+rdfs%3Adescription+%3Fquestion+.%0A%7D%0ALIMIT+250+%23just+some+large+number%0A";
       header="Accept: application/sparql-results+json";
       TypeOfResponseData="JSON";
-      /*
-      var request= new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("outputbox").innerHTML = this.responseText;
-        }
-      };
-      request.open(POST,server_url,true);
-      request.setRequestHeader("Accept", "application/sparql-results+json");
-      request.send(query);
-      */
 
       $.ajax({
         type : "POST",
@@ -271,7 +400,7 @@
             document.getElementById("successbox_query1").innerHTML = "OK";
         }
         });
-
+      }
     }
 
     function clear_fields_query1() {
@@ -279,7 +408,7 @@
       document.getElementById("outputbox_query1").innerHTML = init_str;
     }
 
-    //Show all languages
+    //Show all languages TODO: replace this with renderTable()
     function process_all_languages(response) {
       data=response['results']['bindings'];
       html_code = "";
@@ -325,58 +454,6 @@
     }
 
 
-
-    //create download link
-    function create_download_button_link(MIME_TYPE,fileName,fileContent,button_link_id){
-      // code adapted from [view-source:http://html5-demos.appspot.com/static/a.download.html]
-      var bb = new Blob([fileContent], {type: MIME_TYPE});
-      var a = document.getElementById(button_link_id);//the button link
-      a.download = fileName;//filename of the downloaded file
-      a.href = window.URL.createObjectURL(bb);
-      a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
-    }
-
-    //stringify table to TXT or CSV
-    function makeCSVfromTable(table,rowNames,colNames){
-      table_csv="";
-      table_csv+=" ";
-      for(i=0;i<colNames.length;i++){
-        table_csv+=','+colNames[i];
-      }
-      table_csv+='\n';
-      for(i=0;i<table.length;i++){
-          table_csv+=rowNames[i];
-        for(j=0;j<table[i].length;j++){
-          table_csv+=','+table[i][j];
-        }
-        table_csv+='\n';
-      }
-      return table_csv;
-    }
-    function makeTXTfromTable(table,rowNames,colNames){
-      table_txt="";
-      max_row_name_length=0;
-      for(i=0;i<rowNames.length;i++){
-        if(rowNames[i].length>max_row_name_length)max_row_name_length=rowNames[i].length;
-      }
-      for(i=0;i<max_row_name_length;i++){table_txt+=' ';}
-      for(i=0;i<colNames.length;i++){
-        table_txt+='\t|\t';
-        table_txt+=colNames[i];
-      }
-      table_txt+='\t|\n';
-      for(i=0;i<table.length;i++){
-        for(k=0;k<max_row_name_length-rowNames[i].length;k++){table_txt+=' ';}
-          table_txt+=rowNames[i];
-        for(j=0;j<table[i].length;j++){
-          table_txt+='\t|\t';
-          table_txt+=' '+table[i][j]+' ';
-        }
-        table_txt+='\t|\n';
-      }
-      return table_txt;
-    }
-
     //Query 3 - Display table of languages and parameter values
     var param_data=[];
     var lang_data=[];
@@ -385,7 +462,7 @@
       param_data[i]={};
     }
     function check01(){
-      console.log(param_data);
+      //console.log(param_data);
     }
     function query_param_values(lang,index) {
       server_url="http://localhost:3030/ds/query";
@@ -511,7 +588,7 @@
 
       //display the data
       process_lang_param_values(lang_data,parameters,table);
-      //TODO: generalize the table display function as a function(table)->[html rendered code]
+      //TODO: (DONE) generalize the table display function as a function(table)->[html rendered code]
     }
     function clear_lang_param_values() {
       init_str="Output is displayed here";
@@ -588,8 +665,8 @@
 
             //create download links
             const MIME_TYPE = 'text/plain';
-            create_download_button_link(MIME_TYPE,"tableLangLang_plusminus.csv",table_plusplus,"query4_table2_txt_download_link");
-            create_download_button_link(MIME_TYPE,"tableLangLang_plusplus.csv",table_plusminus,"query4_table1_txt_download_link");
+            create_download_button_link(MIME_TYPE,"tableLangLang_plusminus.csv",table_plusplus,"query4_table2_csv_download_link");
+            create_download_button_link(MIME_TYPE,"tableLangLang_plusplus.csv",table_plusminus,"query4_table1_csv_download_link");
 
       show_lang_dist_values(table_dist);
     }
@@ -645,6 +722,82 @@
     function clear_lang_dist_values() {
       init_str="Output is displayed here";
       document.getElementById("outputbox_lang_dist_values").innerHTML=init_str;
+    }
+
+
+    //Query5
+
+    function display_query5(response,param3){
+      is_param3_specified=(param3==="NOTSPECIFIED"?0:1);
+      languages=[];
+      rowname=[];
+      cols=[];
+      cols.push("Languages");
+      if(is_param3_specified===1)cols.push(param3);
+      for(i=0;i<response.length;i++){
+        languages[i]=[];
+        rowname.push(i+1);
+        languages[i].push(response[i]['lang_name']['value']);
+        if(is_param3_specified===1){
+          languages[i].push(response[i]['third_param_value']['value']);
+        }
+      }
+      renderTable("outputbox_query5",rowname,cols,languages);
+
+      //create download links
+      table_q5_csv=makeCSVfromTable(languages,rowname,cols);
+      table_q5_txt=makeTXTfromTable(languages,rowname,cols);
+      const MIME_TYPE = 'text/plain';
+      create_download_button_link(MIME_TYPE,"tableLang_with_two_specified_parameters.csv",table_q5_csv,"query5_table_csv_download_link");
+      create_download_button_link(MIME_TYPE,"tableLang_with_two_specified_parameters.txt",table_q5_txt,"query5_table_txt_download_link");
+    }
+    function get_param(param_field_id){
+      parameter=document.getElementById(param_field_id).value;
+      if(parameter==="0"){
+        return -1;
+      }
+      return parameter;
+    }
+    function get_param_value(param_value_field_id){
+      param_value=document.getElementById(param_value_field_id).value;
+      if(param_value==="-1"){
+        return -1;
+      }
+      return param_value;
+    }
+    function submit_query5(){
+      param1=get_param("q5_param1");
+      param1_value=get_param_value("q5_param1_value");
+      if(param1===-1||param1_value===-1)document.getElementById("outputbox_query5").innerHTML="<b>You have to select a value or name of parameter 1!</b>";
+      param2=get_param("q5_param2");
+      param2_value=get_param_value("q5_param2_value");
+      if(param2===-1||param2_value===-1)document.getElementById("outputbox_query5").innerHTML="<b>You have to select a value or name of parameter 2!</b>";
+      param3=get_param("q5_param3");
+      if(param3===-1)param3="NOTSPECIFIED";
+
+      server_url="http://localhost:3030/ds/query";
+      query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Flang_name+%3Fthird_param_value%0AWHERE+%7B%0A++%3Flang_param_id+%3A"+param1+"+%22"+param1_value+"%22%3B%0A+++++++++++++++++%3A"+param2+"+%22"+param2_value+"%22.%0A++%3Flang_id+%3AlanguageParameters+%3Flang_param_id.%0A++%3Flang_id+rdfs%3Alabel+%3Flang_name.%0A++OPTIONAL%7B%3Flang_param_id+%3A"+param3+"+%3Fthird_param_value.%7D%0A%7D%0A";
+      //console.log("param1_value:"+param1_value+"  param2_value:"+param2_value);
+      header="Accept: application/sparql-results+json";
+      TypeOfResponseData="JSON";
+
+      $.ajax({
+        type : "POST",
+        Accept : "application/sparql-results+"+TypeOfResponseData,
+        url : server_url,
+        data : query,
+        dataType : TypeOfResponseData,
+        success : function(response) {
+            //console.log("SUCCESS: ", response);
+            //console.log(response);
+            data=response['results']['bindings'];
+            display_query5(data,param3);
+        }
+        });
+    }
+    function clear_fields_query5() {
+      init_str="Output is displayed here";
+      document.getElementById("outputbox_query5").innerHTML=init_str;
     }
 
   </script>

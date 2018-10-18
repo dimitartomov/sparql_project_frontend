@@ -1,0 +1,14 @@
+#this query requires two parameters to have some preset value and returns all the languages that fit this description
+#what is more, in addition to the list of languages there is the value of a third parameter
+prefix : <http://langelin.org/ns/v1#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?lang_name ?third_param_value
+WHERE {
+  ?lang_param_id :DGD "-";
+                 :FGP "+".
+  ?lang_id :languageParameters ?lang_param_id.
+  ?lang_id rdfs:label ?lang_name.
+  OPTIONAL{ ?lang_param_id :FVP ?third_param_value.}
+}
