@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--meta name="description" content=""-->
+    <!--meta name="author" content=""-->
+    <!--link rel="icon" href="../../favicon.ico"-->
+
+    <title>LanGeLin project parameters database</title>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!--link href='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.css' rel='stylesheet' type='text/css'/-->
+  <!--script src='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.js'></script-->
+
+  <script type="text/javascript">
+        function prepare_queries_html_forms() {
+          var $select = $("#param_info_param");
+          for (i=1;i<=91;i++){
+              $select.append($('<option></option>').val(i).html(i))
+          }
+        }
+        window.onload = prepare_queries_html_forms;
+  </script>
+</head>
+<body>
+
+  <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
+      <a class="navbar-brand" href="https://www.york.ac.uk/language/research/projects/langelin/">LanGeLin project parameters database</a>
+  </nav>
+  <div class="container">
+    <div class="starter-template">
+
+      <!-- Parameter Info query-->
+      <div class="panel panel-default">
+
+        <div class="panel-body">
+            <h3>Parameter Information</h3>
+            <h5>This query returns the description of a parameter and the questions used to determine the value for that parameter.</h5>
+            Choose parameter number: <select id="param_info_param"></select><br />
+            <button type="button" class="btn btn-primary btn-xs" onclick="param_info_query()">Submit</button>
+            <button type="button" class="btn btn-xs" onclick="clear_fields_param_info_query()">Clear</button>
+
+        </div>
+      </div>
+      <!-- Parameter Info output-->
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <h5><b>full information:</b></h5>
+          <div id="outputbox_parameter_info">
+
+              <div class="panel-group">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      Parameter <!-- TODO implement dynamic title of the form "P<number> <name> (<label>)" -->
+                    </h4>
+                  </div>
+                  <div class="panel">
+                    <div class="panel-body" ><b>Name: </b> <span id="param_info_name">Parameter name</span></div>
+                    <div class="panel-body" ><b>Label: </b> <span id="param_info_label">PAR</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-group">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      Description <a data-toggle="collapse" href="#param_info_description_panel"><span style="float: right;"><b>show/hide</b></span></a>
+                    </h4>
+                  </div>
+                  <div id="param_info_description_panel" class="panel-collapse collapse in">
+                    <div class="panel-body" id="param_info_description">Parameter description</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-group">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      Implication <a data-toggle="collapse" href="#param_info_implication_panel"><span style="float: right;"><b>show/hide</b></span></a>
+                    </h4>
+                  </div>
+                  <div id="param_info_implication_panel" class="panel-collapse collapse in">
+                    <div class="panel-body" id="param_info_implication">Parameter implication</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-group">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      Questions <a data-toggle="collapse" href="#param_info_questions_panel"><span style="float: right;"><b>show/hide</b></span></a>
+                    </h4>
+                  </div>
+                  <div id="param_info_questions_panel" class="panel-collapse collapse in">
+                    <div class="panel-body" id="param_info_questions">
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-group">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      Manifestation clustering <a data-toggle="collapse" href="#param_info_manifestation_clustering_panel"><span style="float: right;"><b>show/hide</b></span></a>
+                    </h4>
+                  </div>
+                  <div id="param_info_manifestation_clustering_panel" class="panel-collapse collapse in">
+                    <div class="panel-body" id="param_info_manifestation_clustering">Parameter manifestation clustering</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+    </div>
+  </div>
+
+
+  <script>
+      //Param info query
+
+      function param_info_query(){
+        paramNumber=document.getElementById("param_info_param").value;
+        get_param_info(paramNumber, "name_and_label");
+        get_param_info(paramNumber, "description");
+        get_param_info(paramNumber, "implication");
+        get_param_info(paramNumber, "questions");
+        get_param_info(paramNumber, "manifestationClustering");
+      }
+      function get_param_info(paramNumber, type){ //type is any of {name_and_label, description, questions, manifestationClustering}
+
+        server_url="http://localhost:3030/ds/query";
+        switch (type) {
+          case "name_and_label":
+            query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fname+%3Flabel%0AWHERE+%7B%0A++%3Flabel+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Flabel+rdfs%3Alabel+%3Fname.%0A%7D%0A";
+            break;
+          case "description":
+            query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fparam_description%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+rdfs%3Adescription+%3Fparam_description.%0A%7D%0A";
+            break;
+          case "implication":
+            query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fimplication%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3Aimplication+%3Fimplication.%0A%7D%0A";
+            break;
+          case "questions"://returns all question letters (can be used to obtain the total numeber of questions)
+            query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fquestion_letter%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3AparamQuestion+%3Fquestion.%0A++%3Fquestion+%3Aletter+%3Fquestion_letter.%0A%7D%0A";
+            break;
+          case "manifestationClustering":
+            query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3FmanClust%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3AmanifestationClustering+%3FmanClust.%0A%7D%0A";
+            break;
+        }
+        header="Accept: application/sparql-results+json";
+        TypeOfResponseData="JSON";
+
+        $.ajax({
+          type : "POST",
+          Accept : "application/sparql-results+"+TypeOfResponseData,
+          url : server_url,
+          data : query,
+          dataType : TypeOfResponseData,
+          success : function(response) {
+              data=response['results']['bindings'];
+              display_param_info(paramNumber, type, data);
+          }
+          });
+      }
+      function display_param_info(paramNumber, type, data){ //data is JSON and type is any of {name_and_label, description, questions, manifestationClustering}
+        switch (type) {
+          case 'name_and_label':
+            param_name=data[0]['name']['value'];
+            param_label=data[0]['label']['value'];
+            document.getElementById('param_info_name').innerHTML=param_name;
+            document.getElementById('param_info_label').innerHTML=param_label.substring(param_label.length-3,param_label.length);
+            break;
+          case 'description':
+            param_description=data[0]['param_description']['value'];
+            document.getElementById('param_info_description').innerHTML=param_description;
+            break;
+          case 'implication':
+            param_implication=data[0]['implication']['value'];
+            document.getElementById('param_info_implication').innerHTML=param_implication;
+            break;
+          case 'questions':
+            question_boxes_HTML="";
+            for(i=0;i<data.length;i++){
+              questionLetter=data[i]['question_letter']['value'];
+              question_boxes_HTML+=`
+                <div class="col-md-12" id="param_info_question_`+questionLetter+`_info">
+                  <div id="param_info_question_`+questionLetter+`_name_and_label"></div>
+                  <div id="param_info_question_`+questionLetter+`_description"></div>
+                  <div id="param_info_question_`+questionLetter+`_trigger_answer"></div>
+                  <div class="panel-group">
+                    <div class="panel panel-default">
+                    Examples:  <a data-toggle="collapse" href="#param_info_question_`+questionLetter+`_examples_panel"><span style="float: right;"><b>show/hide</b></span></a>:
+                      <div class="panel-body">
+                        <div id="param_info_question_`+questionLetter+`_examples_panel" class="panel-collapse collapse">
+                          <div id="param_info_question_`+questionLetter+`_examples"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }
+            document.getElementById("param_info_questions").innerHTML=question_boxes_HTML;
+            for(i=0;i<data.length;i++){
+              questionLetter=data[i]['question_letter']['value'];
+              get_question_info(paramNumber, questionLetter, "name_and_label");
+              get_question_info(paramNumber, questionLetter, "description");
+              get_question_info(paramNumber, questionLetter, "trigger_answer");
+              get_question_info(paramNumber, questionLetter, "examples");
+            }
+            break;
+          case 'manifestationClustering':
+            param_manClust=data[0]['manClust']['value'];
+            document.getElementById('param_info_manifestation_clustering').innerHTML=param_manClust;
+            // TODO: treat somehow manClust as a string of multiple lines and render is probably with element.append(sth that is verbose) // // QUESTION: check if this is shorter than recording multiple triplets in the DB
+            break;
+        }
+      }
+      function get_question_info(paramNumber, questionLetter, type){ // type is any of {name_and_label, description, trigger_answer, examples}
+        server_url="http://localhost:3030/ds/query";
+        switch (type) {
+          case "name_and_label":
+            query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fname+%3Flabel%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3AparamQuestion+%3Fquestion.%0A++%3Fquestion+%3Aletter+%22"+questionLetter+"%22.%0A++%3Fquestion+%3Aname+%3Fname.%0A++%3Fquestion+rdfs%3Alabel+%3Flabel.%0A%7D%0A";
+            break;
+          case "description":
+            query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fquestion_description%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3AparamQuestion+%3Fquestion.%0A++%3Fquestion+%3Aletter+%22"+questionLetter+"%22.%0A++%3Fquestion+rdfs%3Adescription+%3Fquestion_description.%0A%7D%0A";
+            break;
+          case "trigger_answer":
+            query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Ftrigger_answer%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3AparamQuestion+%3Fquestion.%0A++%3Fquestion+%3Aletter+%22"+questionLetter+"%22.%0A++%3Fquestion+%3AtriggerAnswer+%3Ftrigger_answer.%0A%7D%0A";
+            break;
+          case "examples":
+            query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fexample_language+%3Fexample_description+%3Fexample_answer%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3AparamQuestion+%3Fquestion.%0A++%3Fquestion+%3Aletter+%22"+questionLetter+"%22.%0A++%3Fquestion+%3AquestionExample+%3Fexample.%0A++%3Fexample+rdfs%3Adescription+%3Fexample_description%3B%0A+++++++++++%3Alanguage+%3Fexample_language%3B%0A+++++++++++%3AexampleAnswer+%3Fexample_answer.%0A%7D%0A";
+            break;
+        }
+        header="Accept: application/sparql-results+json";
+        TypeOfResponseData="JSON";
+
+        $.ajax({
+          type : "POST",
+          Accept : "application/sparql-results+"+TypeOfResponseData,
+          url : server_url,
+          data : query,
+          dataType : TypeOfResponseData,
+          success : function(response) {
+              data=response['results']['bindings'];
+              display_question_info(paramNumber, questionLetter, type, data);
+          }
+          });
+      }
+      function display_question_info(paramNumber, questionLetter, type, data){ // data is JSON
+        switch (type) {
+          case 'name_and_label':
+            question_name=data[0]['name']['value'];
+            question_label=data[0]['label']['value'];
+            document.getElementById("param_info_question_"+questionLetter+"_name_and_label").innerHTML=question_label+": <b>"+question_name+"</b>";
+            break;
+          case 'description':
+            question_description=data[0]['question_description']['value'];
+            document.getElementById("param_info_question_"+questionLetter+"_description").innerHTML="<h4><i>"+question_description+"</i></h4>";
+            break;
+          case 'trigger_answer':
+            question_trigger_answer=data[0]['trigger_answer']['value'];
+            document.getElementById("param_info_question_"+questionLetter+"_trigger_answer").innerHTML=question_trigger_answer;
+            break;
+          case 'examples':
+            question_examples_HTML="";
+            for(i=0;i<data.length;i++){
+              exampleContent=data[i]['example_description']['value'];
+              exampleLanguage=data[i]['example_language']['value'];
+              exampleAnswer=data[i]['example_answer']['value'];
+              question_examples_HTML+=`
+                <div class="panel-group col-md-3 col-sm-5 col-xs-6">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <div class="panel-title">`+exampleLanguage+` | `+exampleAnswer+`</div>
+                    </div>
+                    <div class="panel-body">
+                      `+exampleContent+`
+                    </div>
+                  </div>
+                </div>
+              `;
+            }
+            document.getElementById("param_info_question_"+questionLetter+"_examples").innerHTML=question_examples_HTML;
+            break;
+        }
+      }
+      function clear_fields_param_info_query() {
+        document.getElementById("param_info_name").innerHTML="";
+        document.getElementById("param_info_label").innerHTML="";
+        document.getElementById("param_info_description").innerHTML="";
+        document.getElementById("param_info_implication").innerHTML="";
+        document.getElementById("param_info_questions").innerHTML="";
+        document.getElementById("param_info_manifestation_clustering").innerHTML="";
+      }
+    </script>
+
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+</body>
+<footer class="page-footer font-small blue">
+
+  <div class=" text-center py-3">
+    <a href="https://www.york.ac.uk/language/research/projects/langelin/">LanGeLin project main webpage</a>
+    <br />
+    <br />
+  </div>
+
+</footer>
+</html>
