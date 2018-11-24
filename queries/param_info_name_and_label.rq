@@ -1,0 +1,10 @@
+#this query returns the name and label of a parameter
+prefix : <http://langelin.org/ns/v1#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?name ?label
+WHERE {
+  ?label :number "PARAMNUMBERHERE".
+  ?label rdfs:label ?name.
+}
