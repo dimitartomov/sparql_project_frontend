@@ -1,0 +1,15 @@
+#this query returns the details(description, language, answer) of an example to a question
+prefix : <http://langelin.org/ns/v1#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?example_language ?example_description ?example_answer
+WHERE {
+  ?param :number "PARAMNUMBERHERE".
+  ?param :paramQuestion ?question.
+  ?question :letter "QUESTIONLETTERHERE".
+  ?question :questionExample ?example.
+  ?example rdfs:description ?example_description;
+           :language ?example_language;
+           :exampleAnswer ?example_answer.
+}

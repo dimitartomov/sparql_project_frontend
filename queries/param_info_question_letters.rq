@@ -1,0 +1,11 @@
+#this query returns the letters of all questions for a parameter (can be used to obtain the number of questions)
+prefix : <http://langelin.org/ns/v1#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?question_letter
+WHERE {
+  ?param :number "PARAMNUMBERHERE".
+  ?param :paramQuestion ?question.
+  ?question :letter ?question_letter.
+}
