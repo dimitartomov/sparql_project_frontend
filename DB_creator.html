@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--meta name="description" content=""-->
+    <!--meta name="author" content=""-->
+    <!--link rel="icon" href="../../favicon.ico"-->
+
+    <title>Parameter database creator tool</title>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!--link href='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.css' rel='stylesheet' type='text/css'/-->
+  <!--script src='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.js'></script-->
+
+  <script type="text/javascript">
+        NUMBER_OF_PARAMETERS=0;
+        QUESTION_NUMBER = new Array(0);
+        EXAMPLE_NUMBER= new Array(0);
+        TURTLE_TEXT="";
+        function prepare_webpage() {
+          ;
+        }
+        window.onload = prepare_webpage;
+  </script>
+</head>
+<body>
+  <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
+      <a class="navbar-brand" href="https://www.york.ac.uk/language/research/projects/langelin/">Parameters database creator tool</a>
+  </nav>
+  <div class="container">
+    <div class="starter-template">
+      <div class="alert alert-success">
+        Use this tool to create a database for use with the parameters database query webpage. <br />
+        First select a name for the database domain.
+        Then click the <b>'add parameter'</b> button at the bottom to add parameters. <br />
+        When finished click <b>'download database'</b> to download a <b>.ttl</b> file with the databse.
+      </div>
+
+      <!-- filename and domain -->
+      <div class="form-group">
+        <label for="input_domain">database filename:</label>
+        <input type="text" class="form-control" id="input_filename" value="ParametersDB.ttl">
+        <label for="input_domain">database domain:</label>
+        <input type="text" class="form-control" id="input_domain" value="http://langelin.org/ns/v1">
+      </div>
+
+      <!-- parameters input -->
+      <div id="parameters_forms">
+
+      </div>
+      <button style="float: right;" type="button" class="btn btn-primary btn-xs" onclick="add_parameter_form()">add a parameter</button>
+      <br /><br /><br />
+
+      <div class="well">
+        <button type="button" class="btn btn-primary btn-xs" onclick="download_database()">Create</button>
+        <button type="button" class="btn btn-default btn-xs" id="download_button_invisible" style="visibility: hidden;"><a id="download_button">Download</a></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    //return small and big letters of the alphabet by their number in the alphabet, e.g. A is 1st letter so blet(1)->'A' and slet(1)->'a'
+    function slet(num){//small letter
+      return String.fromCharCode('a'.charCodeAt(0)+num-1);
+    }
+    function blet(num){//big letter
+      return String.fromCharCode('A'.charCodeAt(0)+num-1);
+    }
+
+    //create download link
+    function create_download_button_link(MIME_TYPE,fileName,fileContent,button_link_id){
+      // code adapted from [view-source:http://html5-demos.appspot.com/static/a.download.html]
+      var bb = new Blob([fileContent], {type: MIME_TYPE});
+      var a = document.getElementById(button_link_id);//the button link
+      a.download = fileName;//filename of the downloaded file
+      a.href = window.URL.createObjectURL(bb);
+      a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
+    }
+
+    function add_example_form(param_number,question_number){
+      p_num=param_number;
+      q_num=question_number;
+      EXAMPLE_NUMBER[p_num-1][q_num-1]+=1;
+      e_num=EXAMPLE_NUMBER[p_num-1][q_num-1];
+      html_form=`
+        <i>Example `+e_num.toString()+`</i><br />
+        <label for="param_`+p_num.toString()+`_question_`+q_num.toString()+`_example_`+e_num.toString()+`_language">Lang:</label>
+        <input type="text" class="form-control" id="param_`+p_num.toString()+`_question_`+q_num.toString()+`_example_`+e_num.toString()+`_language" placeholder="language">
+        <label for="param_`+p_num.toString()+`_question_`+q_num.toString()+`_example_`+e_num.toString()+`_answer">Answer:</label>
+        <input type="text" class="form-control" id="param_`+p_num.toString()+`_question_`+q_num.toString()+`_example_`+e_num.toString()+`_answer" placeholder="YES/NO">
+        <label for="param_`+p_num.toString()+`_question_`+q_num.toString()+`_example_`+e_num.toString()+`_example">example:</label>
+        <textarea class="form-control" id="param_`+p_num.toString()+`_question_`+q_num.toString()+`_example_`+e_num.toString()+`_example" placeholder="type the example in the form -> a. <example> <gloss> <translation> <br /> b. ..."></textarea>
+      `;
+      $('#question_form_'+p_num.toString()+`_example_form_`+q_num.toString()).html($('#question_form_'+p_num.toString()+`_example_form_`+q_num.toString()).html()+html_form);
+    }
+
+    function add_question_form(param_number){
+      p_num=param_number;
+      q_num=QUESTION_NUMBER[p_num-1]+1;
+      QUESTION_NUMBER[p_num-1]+=1;
+      EXAMPLE_NUMBER[p_num-1].push(0);
+      html_form=`
+            (<span id="param_`+p_num.toString()+`_question_`+blet(q_num)+`_label">P`+p_num.toString()+`_Q`+slet(q_num)+`</span>) <span id="param_`+p_num.toString()+`_question_`+blet(q_num)+`_name">Parameter `+p_num.toString()+`_Question `+blet(q_num)+`</span>
+            <br />
+            <label for="param_`+p_num.toString()+`_question_`+blet(q_num)+`">question:</label>
+            <textarea rows="2" class="form-control" id="param_`+p_num.toString()+`_question_`+blet(q_num)+`" placeholder="type the question here"></textarea>
+            <label for="param_`+p_num.toString()+`_question_`+blet(q_num)+`_trigger_answer">trigger answer:</label>
+            <input type="text" class="form-control" id="param_`+p_num.toString()+`_question_`+blet(q_num)+`_trigger_answer" placeholder="YES=>+ / NO=>- / ..."></textarea>
+            <div id="question_form_`+p_num.toString()+`_example_form_`+q_num.toString()+`">
+
+            </div>
+            <button type="button" class="btn btn-primary btn-xs" onclick="add_example_form('`+p_num.toString()+`','`+q_num.toString()+`')">add an example</button><br />
+      `;
+      $('#question_form_'+p_num.toString()).html($('#question_form_'+p_num.toString()).html()+html_form);
+    }
+
+    function add_parameter_form(){
+      NUMBER_OF_PARAMETERS+=1;
+      QUESTION_NUMBER.push(0);
+      EXAMPLE_NUMBER.push(new Array(0));
+      num=NUMBER_OF_PARAMETERS;
+      form_html=`
+
+              <div class="panel-group">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      Parameter `+num.toString()+` <a data-toggle="collapse" href="#param_form_`+num.toString()+`"><span style="float: right;"><b>show/hide</b></span></a>
+                    </h4>
+                  </div>
+                  <div id="param_form_`+num.toString()+`" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                      <div class="form-group">
+                        <label for="param_label_`+num.toString()+`">label:</label>
+                        <input type="text" class="form-control" id="param_label_`+num.toString()+`" placeholder="label">
+                        <label for="param_name_`+num.toString()+`">name:</label>
+                        <input type="text" class="form-control" id="param_name_`+num.toString()+`" placeholder="name">
+                        <label for="param_desc_`+num.toString()+`">description:</label>
+                        <input type="text" class="form-control" id="param_desc_`+num.toString()+`" placeholder="describe the parameter">
+                        <label for="param_impl_`+num.toString()+`">implication:</label>
+                        <input type="text" class="form-control" id="param_impl_`+num.toString()+`" placeholder="implication">
+                        <label for="param_manClust_`+num.toString()+`">manifestation clustering:</label>
+                        <input type="text" class="form-control" id="param_manClust_`+num.toString()+`" placeholder="parameter manifestation clustering">
+
+                          <b>questions for parameter `+num.toString()+`:</b> <br />
+                        <div class="well">
+                          <div id="question_form_`+num.toString()+`">
+
+                          </div>
+                          <button style="float: right;" type="button" class="btn btn-primary btn-xs" onclick="add_question_form('`+num.toString()+`')">add a question</button>
+                        </div>
+                        <a data-toggle="collapse" href="#param_form_`+num.toString()+`"><span style="float: right;"><b>hide parameter `+num.toString()+`</b></span></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+      `;
+      $('#parameters_forms').html($('#parameters_forms').html()+form_html);
+    }
+
+    function create_database(){
+      ttl="";
+      ttl+=`
+      @prefix : <`+$('#input_domain').val()+`#> .
+      @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      `;
+      ttl="";
+      for (pid=0;pid<NUMBER_OF_PARAMETERS;pid++){
+        p_num=pid+1;
+        p_label=$('#param_label_'+p_num.toString()).val();
+        p_name=$('#param_name_'+p_num.toString()).val();
+        p_description=$('#param_desc_'+p_num.toString()).val();
+        p_implication=$('#param_impl_'+p_num.toString()).val();
+        p_manClust=$('#param_manClust_'+p_num.toString()).val();
+        ttl+=`:`+p_label+`    rdfs:label "`+p_name+`";
+        :number "`+p_num.toString()+`";
+        rdfs:description "`+p_description+`";
+        :implication "`+p_implication+`";
+        :manifestationClustering "`+p_manClust+`".
+        `;
+        for(qid=0;qid<QUESTION_NUMBER[pid];qid++){
+          q_num=qid+1;
+          q_id=p_label+'_q'+('000' + q_num).substr(-3);
+          q_label=$('#param_'+p_num.toString()+'_question_'+blet(q_num)+'_label').html();
+          q_name=$('#param_'+p_num.toString()+'_question_'+blet(q_num)+'_name').html();
+          q_description=$('#param_'+p_num.toString()+'_question_'+blet(q_num)).val();
+          q_triggerAnswer=$('#param_'+p_num.toString()+'_question_'+blet(q_num)+'_trigger_answer').val();
+          ttl+=`:`+p_label+`  :paramQuestion :`+q_id+`.
+          :`+q_id+` rdfs:label "`+q_label+`";
+          :letter "`+blet(q_num)+`";
+          :name "`+q_name+`";
+          rdfs:description "`+q_description+`";
+          :triggerAnswer "`+q_triggerAnswer+`".
+          `;
+          for(eid=0;eid<EXAMPLE_NUMBER[pid][qid];eid++){
+            e_num=eid+1;
+            e_id=q_id+'_ex'+('000' + e_num).substr(-3);
+            e_language=$('#param_'+p_num.toString()+'_question_'+q_num.toString()+'_example_'+e_num.toString()+'_language').val();
+            e_answer=$('#param_'+p_num.toString()+'_question_'+q_num.toString()+'_example_'+e_num.toString()+'_answer').val();
+            e_example=$('#param_'+p_num.toString()+'_question_'+q_num.toString()+'_example_'+e_num.toString()+'_example').val();
+            ttl+=`:`+q_id+` :questionExample :`+e_id+`.
+            :`+e_id+` :language "`+e_language+`";
+                    :exampleAnswer "`+e_answer+`";
+                    rdfs:description "`+e_example+`".
+            `;
+
+          }
+        }
+      }
+      console.log(('000' + 11).substr(-3));
+      return ttl;
+    }
+
+    function download_database(){
+      TURTLE_TEXT = create_database();
+      const MIME_TYPE = 'text/plain';
+      create_download_button_link(MIME_TYPE,$('#input_filename').val(),TURTLE_TEXT,"download_button");
+      $('#download_button_invisible').css('visibility', 'visible');
+    }
+
+  </script>
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+</body>
+<footer class="page-footer font-small blue">
+
+  <div class=" text-center py-3">
+    <a href="https://www.york.ac.uk/language/research/projects/langelin/">LanGeLin project main webpage</a>
+    <br />
+    <br />
+  </div>
+
+</footer>
+</html>
