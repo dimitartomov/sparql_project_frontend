@@ -22,6 +22,8 @@
             document.getElementById("q5_param1").innerHTML=document.getElementById("parameter").innerHTML;
             document.getElementById("q5_param2").innerHTML=document.getElementById("parameter").innerHTML;
             document.getElementById("q5_param3").innerHTML=document.getElementById("parameter").innerHTML;
+            //parameter info query
+            document.getElementById("param_info_param").innerHTML=document.getElementById("parameter").innerHTML;
 
         }
         window.onload = prepare_queries_html_forms;
@@ -40,8 +42,135 @@
             <strong>Info:</strong> Ensure the Jena-Fuseki server is running and the necessary .ttl files have been uploaded.
           </div>
 
+          <!-- Parameter Info output-->
+          <div class="panel panel-default">
+
+            <div class="panel-body">
+                <h3>Parameter Information</h3>
+                <h5>This query returns the description of a parameter and the questions used to determine the value for that parameter.</h5>
+                Choose parameter number: <select id="param_info_param"></select><br />
+                <button type="button" class="btn btn-primary btn-xs" onclick="param_info_query()">Submit</button>
+                <button type="button" class="btn btn-xs" onclick="clear_fields_param_info_query()">Clear</button>
+
+            </div>
+          </div>
+
+          <div class="panel panel-default"><!-- output information -->
+            <div class="panel-body">
+              <h5><b>full information:</b></h5>
+              <div id="outputbox_parameter_info">
+
+                  <div class="panel-group">
+                    <div class="panel panel-info">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          Parameter <!-- TODO implement dynamic title of the form "P<number> <name> (<label>)" -->
+                        </h4>
+                      </div>
+                      <div class="panel">
+                        <div class="panel-body" ><b>Name: </b> <span id="param_info_name">Parameter name</span></div>
+                        <div class="panel-body" ><b>Label: </b> <span id="param_info_label">PAR</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="panel-group">
+                    <div class="panel panel-info">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          Description <a data-toggle="collapse" href="#param_info_description_panel"><span style="float: right;"><b>show/hide</b></span></a>
+                        </h4>
+                      </div>
+                      <div id="param_info_description_panel" class="panel-collapse collapse">
+                        <div class="panel-body" id="param_info_description">Parameter description</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="panel-group">
+                    <div class="panel panel-info">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          Implication <a data-toggle="collapse" href="#param_info_implication_panel"><span style="float: right;"><b>show/hide</b></span></a>
+                        </h4>
+                      </div>
+                      <div id="param_info_implication_panel" class="panel-collapse collapse">
+                        <div class="panel-body" id="param_info_implication">Parameter implication</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="panel-group">
+                    <div class="panel panel-info">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          Questions <a data-toggle="collapse" href="#param_info_questions_panel"><span style="float: right;"><b>show/hide</b></span></a>
+                        </h4>
+                      </div>
+                      <div id="param_info_questions_panel" class="panel-collapse collapse">
+                        <div class="panel-body" id="param_info_questions">
+                          <div id="param_info_question_info">
+                            <div id="param_info_question_name_and_label">QUESTION NAME</div>
+                            <div id="param_info_question_question">QUESTION TEXT</div>
+                            <div id="param_info_question_trigger_answer">ANSWER YES GIVES +</div>
+                            <div id="param_info_question_examples">
+                                            <div class="panel-group", style="display: inline-block">
+                                              <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                  <div class="panel-title">English | YES</div>
+                                                </div>
+                                                <div class="panel-body">
+                                                  EXAMPLE TEXT
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div class="panel-group", style="display: inline-block">
+                                              <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                  <div class="panel-title">English | YES</div>
+                                                </div>
+                                                <div class="panel-body">
+                                                  a.	Pez-o			<br />
+                                                      play-1SG		<br />
+                                                  ‘I play’			<br />
+                                                   b.	Pez-is			<br />
+                                                      play-2SG		<br />
+                                                            ‘You play’			<br />
+                                                            c.	Pez-i		<br />
+                                                                play-3SG		<br />
+                                                        ‘He/she plays’
+                                                </div>
+                                              </div>
+                                            </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="panel-group">
+                    <div class="panel panel-info">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          Manifestation clustering <a data-toggle="collapse" href="#param_info_manifestation_clustering_panel"><span style="float: right;"><b>show/hide</b></span></a>
+                        </h4>
+                      </div>
+                      <div id="param_info_manifestation_clustering_panel" class="panel-collapse collapse">
+                        <div class="panel-body" id="param_info_manifestation_clustering">Parameter manifestation clustering</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          <!--/div--><!-- this should be useless but I wasn't sure if it closed an important and existing div -->
+
           <!-- Query 5 -->
           <div class="panel panel-default">
+
             <div class="panel-body">
                 <h3>Query 5</h3>
                 <h5>This query takes the values of two parameters and returns all languages that have these exact parameters with these exact values. In addition there could be selected a third parameter for its values of the forementioned languages to be queried.</h5>
@@ -90,7 +219,7 @@
                 <h5>Selects all the <i>questions</i> for a single <i>parameter</i>.</h5>
                 <span>Select a parameter: </span>
                 <select id="parameter">
-                  <!--TODO make this list authomated with a query (number of parameters may vary, although very unlikely to do so)-->
+                  <!--TODO make this list authomated with a query (number of parameters may vary?, although very unlikely to do so)-->
                   <option value="0"> - </option>
                   <option value="FGP"> FGP </option>
                   <option value="FGM"> FGM </option>
@@ -800,6 +929,81 @@
       document.getElementById("outputbox_query5").innerHTML=init_str;
     }
 
+    //Param info query
+
+    function param_info_query(){
+      paramNumber=1; // TODO: change this later to be dynamic
+      get_param_info(paramNumber, "name_and_label");
+      get_param_info(paramNumber, "description");
+      get_param_info(paramNumber, "implication");
+      get_param_info(paramNumber, "questions");
+      get_param_info(paramNumber, "manifestationClustering");
+    }
+    function get_param_info(paramNumber, type){ //type is any of {name_and_label, description, questions, manifestationClustering}
+
+      server_url="http://localhost:3030/ds/query";
+      switch (type) {
+        case "name_and_label":
+          query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fname+%3Flabel%0AWHERE+%7B%0A++%3Flabel+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Flabel+rdfs%3Alabel+%3Fname.%0A%7D%0A";
+          break;
+        case "description":
+          query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fparam_description%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+rdfs%3Adescription+%3Fparam_description.%0A%7D%0A";
+          break;
+        case "implication":
+          query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fimplication%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3Aimplication+%3Fimplication.%0A%7D%0A";
+          break;
+        case "questions":
+          query="";
+          break;
+        case "manifestationClustering":
+          query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3FmanClust%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3AmanifestationClustering+%3FmanClust.%0A%7D%0A";
+          break;
+      }
+      header="Accept: application/sparql-results+json";
+      TypeOfResponseData="JSON";
+
+      $.ajax({
+        type : "POST",
+        Accept : "application/sparql-results+"+TypeOfResponseData,
+        url : server_url,
+        data : query,
+        dataType : TypeOfResponseData,
+        success : function(response) {
+            data=response['results']['bindings'];
+            display_param_info(data, type);
+        }
+        });
+    }
+    function display_param_info(data, type){ //data is JSON and type is any of {name_and_label, description, questions, manifestationClustering}
+      switch (type) {
+        case 'name_and_label':
+          param_name=data[0]['name']['value'];
+          param_label=data[0]['label']['value'];
+          document.getElementById('param_info_name').innerHTML=param_name;
+          document.getElementById('param_info_label').innerHTML=param_label.substring(param_label.length-3,param_label.length);
+          break;
+        case 'description':
+          param_description=data[0]['param_description']['value'];
+          document.getElementById('param_info_description').innerHTML=param_description;
+          break;
+        case 'implication':
+          param_implication=data[0]['implication']['value'];
+          document.getElementById('param_info_implication').innerHTML=param_implication;
+          break;
+        case 'questions':
+          ;
+          break;
+        case 'manifestationClustering':
+          param_manClust=data[0]['manClust']['value'];
+          document.getElementById('param_info_manifestation_clustering').innerHTML=param_manClust;
+          // TODO: treat somehow manClust as a string of multiple lines and render is probably with element.append(sth that is verbose) // // QUESTION: check if this is shorter than recording multiple triplets in the DB
+          break;
+      }
+    }
+    function clear_fields_param_info_query() {
+      document.getElementById("param_info_name").innerHTML="Parameter name";
+      document.getElementById("param_info_label").innerHTML="PAR";
+    }
   </script>
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
