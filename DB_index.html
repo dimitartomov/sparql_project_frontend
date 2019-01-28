@@ -16,6 +16,9 @@
   <!--script src='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.js'></script-->
 
   <script type="text/javascript">
+
+        const SERVER_URL="http://localhost:3030/ds/query";
+
         function prepare_queries_html_forms() {
           var $select = $("#param_info_param");
           for (i=1;i<=91;i++){
@@ -140,7 +143,7 @@
       }
       function get_param_info(paramNumber, type){ //type is any of {name_and_label, description, questions, manifestationClustering}
 
-        server_url="http://localhost:3030/ds/query";
+        server_url=SERVER_URL;
         switch (type) {
           case "name_and_label":
             query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fname+%3Flabel%0AWHERE+%7B%0A++%3Flabel+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Flabel+rdfs%3Alabel+%3Fname.%0A%7D%0A";
@@ -227,7 +230,7 @@
         }
       }
       function get_question_info(paramNumber, questionLetter, type){ // type is any of {name_and_label, description, trigger_answer, examples}
-        server_url="http://localhost:3030/ds/query";
+        server_url=SERVER_URL;
         switch (type) {
           case "name_and_label":
             query="query=prefix+%3A+%3Chttp%3A%2F%2Flangelin.org%2Fns%2Fv1%23%3E%0Aprefix+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0A%0ASELECT+%3Fname+%3Flabel%0AWHERE+%7B%0A++%3Fparam+%3Anumber+%22"+paramNumber.toString()+"%22.%0A++%3Fparam+%3AparamQuestion+%3Fquestion.%0A++%3Fquestion+%3Aletter+%22"+questionLetter+"%22.%0A++%3Fquestion+%3Aname+%3Fname.%0A++%3Fquestion+rdfs%3Alabel+%3Flabel.%0A%7D%0A";
@@ -266,7 +269,7 @@
             break;
           case 'description':
             question_description=data[0]['question_description']['value'];
-            document.getElementById("param_info_question_"+questionLetter+"_description").innerHTML="<h4><i>"+question_description+"</i></h4>";
+            document.getElementById("param_info_question_"+questionLetter+"_description").innerHTML="<h4>"+question_description+"</h4>";
             break;
           case 'trigger_answer':
             question_trigger_answer=data[0]['trigger_answer']['value'];
@@ -279,7 +282,7 @@
               exampleLanguage=data[i]['example_language']['value'];
               exampleAnswer=data[i]['example_answer']['value'];
               question_examples_HTML+=`
-                <div class="panel-group col-md-3 col-sm-5 col-xs-6">
+                <div class="panel-group col-md-6 col-sm-12 col-xs-12">
                   <div class="panel panel-default">
                     <div class="panel-heading">
                       <div class="panel-title">`+exampleLanguage+` | `+exampleAnswer+`</div>
