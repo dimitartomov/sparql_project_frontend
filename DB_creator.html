@@ -95,7 +95,9 @@
         <label for="param_`+p_num.toString()+`_question_`+q_num.toString()+`_example_`+e_num.toString()+`_example">example:</label>
         <textarea class="form-control" id="param_`+p_num.toString()+`_question_`+q_num.toString()+`_example_`+e_num.toString()+`_example" placeholder="type the example in the form -> a. <example> <gloss> <translation> <br /> b. ..."></textarea>
       `;
-      $('#question_form_'+p_num.toString()+`_example_form_`+q_num.toString()).html($('#question_form_'+p_num.toString()+`_example_form_`+q_num.toString()).html()+html_form);
+      var appended_example=$(html_form);
+      $('#question_form_'+p_num.toString()+`_example_form_`+q_num.toString()).append(appended_example);
+      //$('#question_form_'+p_num.toString()+`_example_form_`+q_num.toString()).html($('#question_form_'+p_num.toString()+`_example_form_`+q_num.toString()).html()+html_form);
     }
 
     function add_question_form(param_number){
@@ -103,8 +105,7 @@
       q_num=QUESTION_NUMBER[p_num-1]+1;
       QUESTION_NUMBER[p_num-1]+=1;
       EXAMPLE_NUMBER[p_num-1].push(0);
-      html_form=`
-            (<span id="param_`+p_num.toString()+`_question_`+blet(q_num)+`_label">P`+p_num.toString()+`_Q`+slet(q_num)+`</span>) <span id="param_`+p_num.toString()+`_question_`+blet(q_num)+`_name">Parameter `+p_num.toString()+`_Question `+blet(q_num)+`</span>
+      html_form=`<span id="param_`+p_num.toString()+`_question_`+blet(q_num)+`_label">P`+p_num.toString()+`_Q`+slet(q_num)+`</span> <span id="param_`+p_num.toString()+`_question_`+blet(q_num)+`_name">Parameter `+p_num.toString()+`_Question `+blet(q_num)+`</span>
             <br />
             <label for="param_`+p_num.toString()+`_question_`+blet(q_num)+`">question:</label>
             <textarea rows="2" class="form-control" id="param_`+p_num.toString()+`_question_`+blet(q_num)+`" placeholder="type the question here"></textarea>
@@ -115,7 +116,9 @@
             </div>
             <button type="button" class="btn btn-primary btn-xs" onclick="add_example_form('`+p_num.toString()+`','`+q_num.toString()+`')">add an example</button><br />
       `;
-      $('#question_form_'+p_num.toString()).html($('#question_form_'+p_num.toString()).html()+html_form);
+      var appended_question=$(html_form);
+      $('#question_form_'+p_num.toString()).append(appended_question);
+      //$('#question_form_'+p_num.toString()).html($('#question_form_'+p_num.toString()).html()+html_form);
     }
 
     function add_parameter_form(){
@@ -160,7 +163,9 @@
                 </div>
               </div>
       `;
-      $('#parameters_forms').html($('#parameters_forms').html()+form_html);
+      var appended_parameter=$(form_html);
+      $('#parameters_forms').append(appended_parameter);
+      //$('#parameters_forms').html($('#parameters_forms').html()+form_html);
     }
 
     function create_database(){
