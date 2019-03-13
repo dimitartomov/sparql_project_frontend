@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--meta name="description" content=""-->
+    <!--meta name="author" content=""-->
+    <!--link rel="icon" href="../../favicon.ico"-->
+
+    <title>LanGeLin project parameters database</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="./scripts/bootstrap.min.css" id="bootstrap-css">
+  <!--link href='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.css' rel='stylesheet' type='text/css'/-->
+  <!--script src='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.js'></script-->
+
+  <script type="text/javascript">
+        const SERVER_URL="http://localhost:3030/ds/query";
+        TURTLE_TEXT="";
+
+  </script>
+  <style>
+  .navbar-brand {
+      font-size: 24px;
+  }
+
+  .navbar-container {
+      padding: 20px 0 20px 0;
+  }
+
+  .navbar.navbar-fixed-top.fixed-theme {
+      background-color: #222;
+      border-color: #080808;
+      box-shadow: 0 0 5px rgba(0,0,0,.8);
+  }
+
+  .navbar-brand.fixed-theme {
+      font-size: 18px;
+  }
+
+  .navbar-container.fixed-theme {
+      padding: 0;
+  }
+  .navbar-brand.fixed-theme,
+  .navbar-container.fixed-theme,
+  .navbar.navbar-fixed-top.fixed-theme,
+  .navbar-brand,
+  .navbar-container{
+      transition: 0.8s;
+      -webkit-transition:  0.8s;
+  }
+</style>
+</head>
+<body style="background-color: #f9f9f9">
+
+<!-- Navbar code and style is from https://bootsnipp.com/snippets/558WB  -->
+<hr style="border-color: #111111; border-width: 2px"/><p style="padding-bottom: 9px"></p><hr style="border-color: #111111; border-width: 2px"/><br />
+        <nav id="header" class="navbar navbar-fixed-top">
+            <div id="header-container" class="container navbar-container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar" style="background-color: #cccccc;"></span>
+                        <span class="icon-bar" style="background-color: #cccccc;"></span>
+                        <span class="icon-bar" style="background-color: #cccccc;"></span>
+                    </button>
+                    <a id="brand" class="navbar-brand" href="https://www.york.ac.uk/language/research/projects/langelin/">LanGeLin project parameters database</a>
+
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="./DB_index.html">Database</a></li>
+                        <li><a href="./DB_creator.html">Create Database</a></li>
+                        <li class="active"><a href="./DB_example.html">Create Examples</a></li>
+                        <li><a href="./DB_documentation.html">Documentation</a></li>
+                    </ul>
+                </div><!-- /.nav-collapse -->
+            </div><!-- /.container -->
+        </nav><!-- /.navbar -->
+
+      <div class="container">
+
+        <div class="starter-template">
+
+          <div class="alert alert-success">
+            Describe the example you wish to submit to the team. Clicking 'Download' you can save an <i>SQL Turtle</i> file and send it to <a href="mailto:linguistics@york.ac.uk">linguistics@york.ac.uk</a>
+          </div>
+
+          <!-- parameters input -->
+          <div id="example_form">
+
+              <i>Describe example number
+                <select id="e_num"></select> for question <select id="q_num"></select>
+                of parameter <select id="p_num"></select>
+                with label
+                <input type="text" id="param_label" placeholder="LBL">
+              </i><br />
+              <label for="example_language">Lang:</label>
+              <input type="text" class="form-control" id="example_language" placeholder="language">
+              <label for="example_answer">Answer:</label>
+              <input type="text" class="form-control" id="example_answer" placeholder="YES/NO">
+              <label for="example_example">example:</label>
+              <textarea class="form-control" id="example_example" placeholder="type the example in HTML (e.g -> a. <example> <gloss> <translation> <br /> b. ...)"></textarea>
+
+          </div>
+
+          <div class="well">
+            <button type="button" class="btn btn-primary btn-xs" onclick="download_example()">Download</button>
+            <a id="download_link" style="visibility: hidden;">Download</a>
+          </div>
+
+        </div>
+      </div>
+
+<script type="text/javascript">
+
+  //FOR THE NAVBAR
+
+  var myNavBar = {
+
+      flagAdd: true,
+
+      elements: [],
+
+      init: function (elements) {
+          this.elements = elements;
+      },
+
+      add : function() {
+          if(this.flagAdd) {
+              for(var i=0; i < this.elements.length; i++) {
+                  document.getElementById(this.elements[i]).className += " fixed-theme";
+              }
+              this.flagAdd = false;
+          }
+      },
+
+      remove: function() {
+          for(var i=0; i < this.elements.length; i++) {
+              document.getElementById(this.elements[i]).className =
+                      document.getElementById(this.elements[i]).className.replace( /(?:^|\s)fixed-theme(?!\S)/g , '' );
+          }
+          this.flagAdd = true;
+      }
+
+  };
+  myNavBar.init(  [
+      "header",
+      "header-container",
+      "brand",
+      "navbar"
+  ]);
+  function offSetManager(){
+
+      var yOffset = 0;
+      var currYOffSet = window.pageYOffset;
+
+      if(yOffset < currYOffSet) {
+          myNavBar.add();
+      }
+      else if(currYOffSet == yOffset){
+          myNavBar.remove();
+      }
+
+  }
+  window.onscroll = function(e) {
+      offSetManager();
+  }
+  offSetManager();
+
+  //END NAVBAR CODE
+
+  //return small and big letters of the alphabet by their number in the alphabet, e.g. A is 1st letter so blet(1)->'A' and slet(1)->'a'
+  function slet(num){//small letter
+    return String.fromCharCode('a'.charCodeAt(0)+num-1);
+  }
+  function blet(num){//big letter
+    return String.fromCharCode('A'.charCodeAt(0)+num-1);
+  }
+
+  for (i=1;i<=26;i++){
+      $('#q_num').append("<option value="+i+">"+blet(i)+"</option>");
+  }
+  for (i=1;i<=91;i++){
+      $("#p_num").append("<option value="+i+">"+i+"</option>");
+  }
+  for (i=1;i<=100;i++){
+      $("#e_num").append("<option value="+i+">"+i+"</option>");
+  }
+  //create download link
+  function create_download_button_link(MIME_TYPE,fileName,fileContent,button_link_id){
+    // code adapted from [view-source:http://html5-demos.appspot.com/static/a.download.html]
+    var bb = new Blob([fileContent], {type: MIME_TYPE});
+    var a = document.getElementById(button_link_id);//the button link
+    a.download = fileName;//filename of the downloaded file
+    a.href = window.URL.createObjectURL(bb);
+    a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
+  }
+
+  function create_example() {
+    var ttl="";
+    var q_num=$('#q_num').val();
+    var e_num=$('#e_num').val();
+    var p_label=$('#param_label').val();
+    var q_id=p_label+'_q'+('000' + q_num).substr(-3);
+    var e_id=q_id+'_ex'+('000' + e_num).substr(-3);
+    var e_language=$('#example_language').val();
+    var e_answer=$('#example_answer').val();
+    var e_example=$('#example_example').val();
+    ttl+=`:`+q_id+` :questionExample :`+e_id+`.
+    :`+e_id+` :language "`+e_language+`";
+            :exampleAnswer "`+e_answer+`";
+            rdfs:description "`+e_example+`".
+    `;
+    return ttl;
+  }
+  function download_example(){
+    TURTLE_TEXT = create_example();
+    const MIME_TYPE = 'text/plain';
+    create_download_button_link(MIME_TYPE,"param"+$('#p_num').val()+"_question"+blet(parseInt($('#q_num').val()))+"_example"+$('#e_num').val()+".ttl",TURTLE_TEXT,"download_link");
+    $('#download_link')[0].click();
+  }
+</script>
+
+
+<!-- Latest compiled JavaScript -->
+<script src="./scripts/bootstrap.min.js"></script>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.4/js/tether.min.js"  crossorigin="anonymous"></script> <!-- integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" -->
+</body>
+<footer class="page-footer font-small blue">
+
+<div class=" text-center py-3">
+<a href="https://www.york.ac.uk/language/research/projects/langelin/">LanGeLin project main webpage</a>
+<br />
+<br />
+</div>
+
+</footer>
+</html>
