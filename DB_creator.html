@@ -9,9 +9,9 @@
 
     <title>Parameter database creator tool</title>
 
-  <script src="./scripts/jquery-3.3.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="./scripts/bootstrap.min.css">
+  <link rel="stylesheet" href="./scripts/bootstrap.min.css" id="bootstrap-css">
   <!--link href='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.css' rel='stylesheet' type='text/css'/-->
   <!--script src='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.js'></script-->
 
@@ -20,10 +20,100 @@
         QUESTION_NUMBER = new Array(0);
         EXAMPLE_NUMBER= new Array(0);
         TURTLE_TEXT="";
-        function prepare_webpage() {
-          ;
-        }
-        window.onload = prepare_webpage;
+
+          </script>
+          <style>
+          .navbar-brand {
+              font-size: 24px;
+          }
+
+          .navbar-container {
+              padding: 20px 0 20px 0;
+          }
+
+          .navbar.navbar-fixed-top.fixed-theme {
+              background-color: #222;
+              border-color: #080808;
+              box-shadow: 0 0 5px rgba(0,0,0,.8);
+          }
+
+          .navbar-brand.fixed-theme {
+              font-size: 18px;
+          }
+
+          .navbar-container.fixed-theme {
+              padding: 0;
+          }
+          .navbar-brand.fixed-theme,
+          .navbar-container.fixed-theme,
+          .navbar.navbar-fixed-top.fixed-theme,
+          .navbar-brand,
+          .navbar-container{
+              transition: 0.8s;
+              -webkit-transition:  0.8s;
+          }
+        </style>
+</head>
+<body style="background-color: #f9f9f9">
+<!-- Navbar code and style is adapted from https://bootsnipp.com/snippets/558WB  -->
+<hr style="border-color: #111111; border-width: 2px"/><p style="padding-bottom: 9px"></p><hr style="border-color: #111111; border-width: 2px"/><br />
+        <nav id="header" class="navbar navbar-fixed-top">
+            <div id="header-container" class="container navbar-container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar" style="background-color: #cccccc;"></span>
+                        <span class="icon-bar" style="background-color: #cccccc;"></span>
+                        <span class="icon-bar" style="background-color: #cccccc;"></span>
+                    </button>
+                    <a id="brand" class="navbar-brand" href="https://www.york.ac.uk/language/research/projects/langelin/">LanGeLin project parameters database</a>
+
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="./DB_index.html">Database</a></li>
+                        <li class="active"><a href="./DB_creator.html">Create Database</a></li>
+                        <li><a href="./DB_example.html">Create Examples</a></li>
+                        <li><a href="./DB_documentation.html">Documentation</a></li>
+                    </ul>
+                </div><!-- /.nav-collapse -->
+            </div><!-- /.container -->
+        </nav><!-- /.navbar -->
+  <div class="container">
+    <div class="starter-template">
+      <div class="alert alert-success">
+        Use this tool to create a database for use with the parameters database query webpage. <br />
+        First select a name for the database domain.
+        Then click the <b>'add parameter'</b> button at the bottom to add parameters. <br />
+        When finished click <b>'download database'</b> to download a <b>.ttl</b> file with the databse.
+      </div>
+
+      <!-- filename and domain -->
+      <div class="form-group">
+        <label for="input_domain">database filename:</label>
+        <input type="text" class="form-control" id="input_filename" value="ParametersDB.ttl">
+        <label for="input_domain">database domain:</label>
+        <input type="text" class="form-control" id="input_domain" value="http://langelin.org/ns/v1">
+      </div>
+
+      <!-- parameters input -->
+      <div id="parameters_forms">
+
+      </div>
+      <button style="float: right;" type="button" class="btn btn-primary btn-xs" onclick="add_parameter_form()">add a parameter</button>
+      <br /><br /><br />
+
+      <div class="well">
+        <button type="button" class="btn btn-primary btn-xs" onclick="download_database()">Create</button>
+        <button type="button" class="btn btn-default btn-xs" id="download_button_invisible" style="visibility: hidden;"><a id="download_button">Download</a></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+//NAVBAR
+
+
          var myNavBar = {
 
                     flagAdd: true,
@@ -74,95 +164,8 @@
                     offSetManager();
                 }
                 offSetManager();
-          </script>
-          <style>
-          .navbar-brand {
-              font-size: 24px;
-          }
 
-          .navbar-container {
-              padding: 20px 0 20px 0;
-          }
-
-          .navbar.navbar-fixed-top.fixed-theme {
-              background-color: #222;
-              border-color: #080808;
-              box-shadow: 0 0 5px rgba(0,0,0,.8);
-          }
-
-          .navbar-brand.fixed-theme {
-              font-size: 18px;
-          }
-
-          .navbar-container.fixed-theme {
-              padding: 0;
-          }
-          .navbar-brand.fixed-theme,
-          .navbar-container.fixed-theme,
-          .navbar.navbar-fixed-top.fixed-theme,
-          .navbar-brand,
-          .navbar-container{
-              transition: 0.8s;
-              -webkit-transition:  0.8s;
-          }
-        </style>
-</head>
-<body style="background-color: #f9f9f9">
-<hr style="border-color: #111111; border-width: 2px"/><p style="padding-bottom: 9px"></p><hr style="border-color: #111111; border-width: 2px"/><br />
-<nav id="header" class="navbar navbar-fixed-top">
-      <div id="header-container" class="container navbar-container">
-          <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="https://www.york.ac.uk/language/research/projects/langelin/">LanGeLin project parameters database</a>
-
-          </div>
-          <div id="navbar" class="collapse navbar-collapse">
-              <ul class="nav navbar-nav">
-                  <li class="active"><a href="./DB_index.html">Database</a></li>
-                  <li><a href="./DB_creator.html">Create Database</a></li>
-                  <li><a href="./DB_documentation.html">Documentation</a></li>
-              </ul>
-          </div><!-- /.nav-collapse -->
-      </div><!-- /.container -->
-  </nav><!-- /.navbar -->
-  <div class="container">
-    <div class="starter-template">
-      <div class="alert alert-success">
-        Use this tool to create a database for use with the parameters database query webpage. <br />
-        First select a name for the database domain.
-        Then click the <b>'add parameter'</b> button at the bottom to add parameters. <br />
-        When finished click <b>'download database'</b> to download a <b>.ttl</b> file with the databse.
-      </div>
-
-      <!-- filename and domain -->
-      <div class="form-group">
-        <label for="input_domain">database filename:</label>
-        <input type="text" class="form-control" id="input_filename" value="ParametersDB.ttl">
-        <label for="input_domain">database domain:</label>
-        <input type="text" class="form-control" id="input_domain" value="http://langelin.org/ns/v1">
-      </div>
-
-      <!-- parameters input -->
-      <div id="parameters_forms">
-
-      </div>
-      <button style="float: right;" type="button" class="btn btn-primary btn-xs" onclick="add_parameter_form()">add a parameter</button>
-      <br /><br /><br />
-
-      <div class="well">
-        <button type="button" class="btn btn-primary btn-xs" onclick="download_database()">Create</button>
-        <button type="button" class="btn btn-default btn-xs" id="download_button_invisible" style="visibility: hidden;"><a id="download_button">Download</a></button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-
+//END NAVBAR
     //return small and big letters of the alphabet by their number in the alphabet, e.g. A is 1st letter so blet(1)->'A' and slet(1)->'a'
     function slet(num){//small letter
       return String.fromCharCode('a'.charCodeAt(0)+num-1);
@@ -171,15 +174,15 @@
       return String.fromCharCode('A'.charCodeAt(0)+num-1);
     }
 
-    //create download link
-    function create_download_button_link(MIME_TYPE,fileName,fileContent,button_link_id){
-      // code adapted from [view-source:http://html5-demos.appspot.com/static/a.download.html]
-      var bb = new Blob([fileContent], {type: MIME_TYPE});
-      var a = document.getElementById(button_link_id);//the button link
-      a.download = fileName;//filename of the downloaded file
-      a.href = window.URL.createObjectURL(bb);
-      a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
-    }
+      //create download link
+      function create_download_button_link(MIME_TYPE,fileName,fileContent,button_link_id){
+        // code adapted from [view-source:http://html5-demos.appspot.com/static/a.download.html]
+        var bb = new Blob([fileContent], {type: MIME_TYPE});
+        var a = document.getElementById(button_link_id);//the button link
+        a.download = fileName;//filename of the downloaded file
+        a.href = window.URL.createObjectURL(bb);
+        a.dataset.downloadurl = [MIME_TYPE, a.download, a.href].join(':');
+      }
 
     function add_example_form(param_number,question_number){
       p_num=param_number;
@@ -317,7 +320,7 @@
           }
         }
       }
-      console.log(('000' + 11).substr(-3));
+      //console.log(('000' + 11).substr(-3));
       return ttl;
     }
 
@@ -330,20 +333,20 @@
 
   </script>
 
-  <!-- Latest compiled JavaScript -->
-  <script src="./scripts/bootstrap.min.js"></script>
-  <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="./scripts/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<!-- Latest compiled JavaScript -->
+<script src="./scripts/bootstrap.min.js"></script>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.4/js/tether.min.js"  crossorigin="anonymous"></script> <!-- integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" -->
 </body>
 <footer class="page-footer font-small blue">
 
-  <div class=" text-center py-3">
-    <a href="https://www.york.ac.uk/language/research/projects/langelin/">LanGeLin project main webpage</a>
-    <br />
-    <br />
-  </div>
+<div class=" text-center py-3">
+<a href="https://www.york.ac.uk/language/research/projects/langelin/">LanGeLin project main webpage</a>
+<br />
+<br />
+</div>
 
 </footer>
 </html>
